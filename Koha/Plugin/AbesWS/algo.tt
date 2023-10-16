@@ -1,0 +1,94 @@
+[% INCLUDE "$PLUGIN_DIR/head.tt" %]
+[% INCLUDE 'datatables.inc' %]
+
+<h1>AlgoLiens</h1>
+[% IF rcr_select %]
+ <form method="get">
+  <input type="hidden" name="class" value="[% CLASS %]"/>
+  <input type="hidden" name="method" value="[% METHOD %]"/>
+  <input type="hidden" name="ws" value="algo"/>
+
+  <fieldset class="rows">
+    <legend>Filtrage</legend>
+    <ol>
+      <li>
+        <label for="rcr-select">RCR à contrôler : </label>
+        <select name="rcr" id="rcr-select" multiple size="8">
+        [% FOREACH r IN rcr_select %]
+          <option value="[% r.0 %]">[% r.1 %]</option>
+        [% END %]
+        </select>
+      </li>
+      <li>
+        <label for="tdoc-select">Types de notice : </label>
+        <select name="tdoc" id="tdoc-select" multiple size="15">
+        [% FOREACH t IN tdoc_select %]
+          <option value="[% t.0 %]">[% t.1 %]</option>
+        [% END %]
+        </select>
+      </li>
+    </ol>
+  </fieldset>
+
+  <fieldset class="action">
+   <input type="submit" value="Lancer AlgoLiens" />
+  </fieldset>
+ </form>
+
+[% ELSE %]
+ <p>
+   Liste des anomalies des zones de lien.
+ </p>
+ <table id="table_algo">
+  <thead>
+   <tr>
+    <th>PPN</th>
+    <th>RCR</th>
+    <th>Type</th>
+    <th>Date</th>
+    <th>Titre/Vedette</th>
+    <th>Zones</th>
+   </tr>
+  </thead>
+  <tbody>
+   [% FOREACH rec IN recs %]
+    [% tdoc = rec.tdoc.trim() %]
+    [% rcr = rec.rcr.trim()
+       rcr_label = rcr_hash.$rcr
+    %]
+    <tr>
+      <td>
+        <a onclick="copyToClipboard('[% rec.ppn %]')" style="cursor: copy;" title="Copie du PPN pour WinIBW">📋</a>
+        <a href="https://www.sudoc.fr/[% rec.ppn %]" target="_blank" title="Dans le Sudoc">[% rec.ppn %]</a>
+      </td>
+      <td>[% rcr_label %]</td>
+      <td>[% tdoc_hash.$tdoc %]</td>
+      <td>[% rec.date %]
+      <td>
+        <a href="/cgi-bin/koha/catalogue/MARCdetail.pl?biblionumber=[% rec.biblionumber %]"
+           target="_blank" title="Notice Koha">[% rec.title %]</a>
+      </td>
+      <td>[% rec.where.join('; ') %]
+    </tr>
+   [% END %]
+  </tbody>
+ </table>
+[% END %]
+
+<script>
+function copyToClipboard(value) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val(value).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
+$(document).ready(() => {
+  $('#table_algo').DataTable($.extend(true, {}, dataTablesDefaults, {
+    "aaSorting": [[ 1, "asc" ]],
+    "paginationType": "full",
+  }));});
+</script>
+
+[% INCLUDE "$PLUGIN_DIR/foot.tt" %]

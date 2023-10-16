@@ -1,0 +1,37 @@
+[% INCLUDE "$PLUGIN_DIR/head.tt" %]
+
+<div class="row">
+ <h1>Abes WS</h1>
+</div>
+
+<div class="row">
+ <div class="col-md-6">
+  <p>
+   <b>Abes WS</b> est un ensemble d'outils permettant d'exploiter à partir de Koha
+   certains services web de l'Abes.
+  </p>
+  <ul>
+   <li>
+    <p>
+     <b><a href="http://documentation.abes.fr/sudoc/manuels/administration/aidewebservices/index.html#BiblioControl">
+     bibliocontrol</a></b> — Renvoie une liste de notices bibliographiques présentant
+     une ou plusieurs anomalies.
+    <p>
+   </li>
+   <li>
+    <p>
+     <b><a href="http://documentation.abes.fr/sudoc/manuels/administration/aidewebservices/index.html#multiwhere">
+     multiwhere</a></b> — Renvoie la liste des localisations d'une notices bibliographique.
+    <p>
+   </li>
+   <li>
+    <b><a href="http://documentation.abes.fr/sudoc/manuels/controle_bibliographique/algoliens/index.html">
+    AlgoLiens</a></b> — Renvoie une liste des notices bibliographiques et d'autorités ayant des 
+    anomalies dans les zones de liens.
+  </ul>
+ </div>
+</div>
+<div class="col-md-6">
+</div>
+
+[% INCLUDE "$PLUGIN_DIR/foot.tt" %]

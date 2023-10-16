@@ -1,0 +1,34 @@
+[% INCLUDE 'doc-head-open.inc' %]
+ <title>Abes WS</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs">
+ <a href="/cgi-bin/koha/mainpage.pl">Accueil</a> &rsaquo; 
+ <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; Abes WS
+</div>
+
+<div class="main container-fluid">
+ <div class="row-fluid">
+
+  <div class="col-md-2">
+   <div id="navmenu">
+    <ul>
+     <a href="http://documentation.abes.fr/sudoc/manuels/administration/aidewebservices/index.html" alt="Services Web de l'Abes">
+      <img src="[% PLUGIN_PATH %]/img/logo-abes.svg"/>
+     </a>
+     <ul>
+      <li><a href="?class=[% CLASS %]&method=tool">Accueil </a></li>
+      <li><a href="?class=[% CLASS %]&method=tool&ws=bibliocontrol">bibliocontrol</a></li>
+      <li><a href="?class=[% CLASS %]&method=tool&ws=algo">AlgoLiens</a></li>
+      <li><a href="?class=[% CLASS %]&method=configure">Configuration</a></li>
+     </ul>
+    </ul>
+   </div>
+  </div>
+
+  <div class="col-md-10">
+  

@@ -1,0 +1,75 @@
+[% INCLUDE "$PLUGIN_DIR/head.tt" %]
+[% INCLUDE 'datatables.inc' %]
+
+<h1>Bibliocontrol</h1>
+[% IF rcr_select %]
+ <form method="get">
+  <input type="hidden" name="class" value="[% CLASS %]"/>
+  <input type="hidden" name="method" value="[% METHOD %]"/>
+  <input type="hidden" name="ws" value="bibliocontrol"/>
+
+  <p>Sélectionner le RCR à contrôler</p>
+  <select name="rcr" id="rcr-select">
+   [% FOREACH r IN rcr_select %]
+    <option value="[% r.0 %]">[% r.1 %]</option>
+   [% END %]
+  </select>
+  <fieldset class="action">
+   <input type="submit" value="Lancer le contrôle" />
+  </fieldset>
+ </form>
+
+[% ELSE %]
+ <p>
+   Liste des anomalies de catalogage du RCR [% rcr %].
+ </p>
+ <table id="table_bibliocontrol">
+  <thead>
+   <tr>
+    <th>PPN</th>
+    <th>Titres</th>
+    <th>225</th>
+    <th>70x</th>
+    <th>181</th>
+   </tr>
+  </thead>
+  <tbody>
+   [% FOREACH bib IN bibs %]
+    <tr>
+      <td>
+        <a onclick="copyToClipboard('[% bib.ppn %]')" style="cursor: copy;" title="Copie du PPN pour WinIBW">📋</a>
+        <a href="https://www.sudoc.fr/[% bib.ppn %]" target="_blank" title="Dans le Sudoc">[% bib.ppn %]</a>
+      </td>
+      <td>
+        <a href="/cgi-bin/koha/catalogue/[% IF c.bibliocontrol.link_koha == 'marc' %]MARC[% END %]detail.pl?biblionumber=[% bib.biblionumber %]"
+           target="_blank" title="Dans Koha">[% bib.title %]</a>
+      </td>
+      <td>[% IF bib.ctrl.0 %]⚠️[% END %]</td>
+      <td>[% IF bib.ctrl.1 %]⚠️[% END %]</td>
+      <td>[% IF bib.ctrl.2 %]⚠️[% END %]</td>
+    </tr>
+   [% END %]
+  </tbody>
+ </table>
+[% END %]
+
+<script>
+function copyToClipboard(value) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val(value).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
+$(document).ready(() => {
+  $('#table_bibliocontrol').DataTable($.extend(true, {}, dataTablesDefaults, {
+    "aoColumnDefs": [
+      { "aTargets": [-1, -2, -3], "bSortable": false, "bSearchable": false },
+    ],
+    "aaSorting": [[ 1, "asc" ]],
+    "paginationType": "full",
+  }));});
+</script>
+
+[% INCLUDE "$PLUGIN_DIR/foot.tt" %]

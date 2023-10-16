@@ -1,0 +1,51 @@
+[% INCLUDE "$PLUGIN_DIR/head.tt" %]
+[% INCLUDE 'datatables.inc' %]
+
+<h1>Réalignement IdRef</h1>
+
+<p>
+  Une tâche de réalignement des notices bibliographiques est lancée
+  régulièrement. Trois actions sont effectuées : <b>1. suppression</b>,
+  les PPN qui n'existent plus dans IdRef sont supprimées des notices
+  biblio : <b>2. fusion</b>, les PPN qui pointent vers une autorités
+  fusionnées à une autre autorités sont remplacés par le PPN de
+  l'autorité retenue ; <b>3. modification</b>, Les vedettes autorités
+  modifiées dans IdRef sont reportées dans les notices bibliographiques.
+</p>
+
+<table id="table_realign">
+  <thead>
+   <tr>
+    <th>ID</th>
+    <th>Début</th>
+    <th>Fin</th>
+   </tr>
+  </thead>
+  <tbody>
+    [% FOREACH a IN actions %]
+      <tr>
+        <td><a href="?class=[% CLASS %]&method=tool&ws=realignid&id=[% a.id %]">[% a.id %]</td>
+        <td>[% a.start %]</td>
+        <td>[% a.end %]</td>
+      </tr>
+    [% END %]
+  </tbody>
+</table>
+
+<script>
+function copyToClipboard(value) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val(value).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
+$(document).ready(() => {
+  $('#table_realign').DataTable($.extend(true, {}, dataTablesDefaults, {
+    "aaSorting": [[ 0, "desc" ]],
+    "paginationType": "full",
+  }));});
+</script>
+
+[% INCLUDE "$PLUGIN_DIR/foot.tt" %]

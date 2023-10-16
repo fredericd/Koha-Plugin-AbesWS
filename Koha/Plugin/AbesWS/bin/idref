@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+
+use Modern::Perl;
+use utf8;
+use FindBin qw( $Bin );
+say $Bin;
+use lib "$Bin/../../../../../";
+use Koha::Plugin::AbesWS;
+use YAML qw/ Dump /;
+use Try::Tiny;
+
+binmode(STDOUT, ':encoding(utf8)');
+
+unless ( @ARGV ) {
+    say "Usage: idref action param1 param2 ...";
+    exit;
+}
+
+my $plugin = Koha::Plugin::AbesWS->new();
+my $method = shift @ARGV;
+if ($method =~ /realign/i) {
+    $plugin->realign(@ARGV);
+}
+elsif ($method =~ /autorite/i) {
+    $plugin->autorite(@ARGV);
+}
+elsif ($method =~ /reset/i) {
+    $plugin->install();
+}

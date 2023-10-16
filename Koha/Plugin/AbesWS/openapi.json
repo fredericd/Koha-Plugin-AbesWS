@@ -1,0 +1,81 @@
+{
+  "/biblio/{ppn}": {
+    "get": {
+      "x-mojo-to": "AbesWS::Controller#get",
+      "operationId": "getAbesBiblioService",
+      "tags": [
+        "fun"
+      ],
+      "parameters": [
+        {
+          "name": "ppn",
+          "in": "path",
+          "description": "PPN Pica Production Number",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "Liste des publications d'un auteur",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "ppn": {
+                "description": "PPN de l'auteur",
+                "type": "string"
+              },
+              "name": {
+                "description": "Nom de l'auteur",
+                "type": "string"
+              },
+              "roles": {
+                "description": "Les publications de l'auteur par fonction",
+                "type": "array"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "PPN non trouvé",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "Error message",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Internal error",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "Error message",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Under maintenance",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "description": "Error message",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

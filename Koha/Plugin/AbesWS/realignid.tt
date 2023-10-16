@@ -1,0 +1,52 @@
+[% INCLUDE "$PLUGIN_DIR/head.tt" %]
+[% INCLUDE 'datatables.inc' %]
+
+<h1>
+  Réalignement #[% action.id %]
+  <small>[% action.start %] - [% action.end %]</small>
+</h1>
+
+<table id="table_realign">
+  <thead>
+   <tr>
+    <th>biblionumber</th>
+    <th>PPN</th>
+    <th>Action</th>
+    <th>Avant</th>
+    <th>Après</th>
+   </tr>
+  </thead>
+  <tbody>
+    [% FOREACH a IN realign %]
+      <tr>
+        <td>[% a.bn %]</td>
+        <td>[% a.ppn %]</td>
+        <td>
+          [% IF a.action == 'del' %]suppression
+          [% ELSIF a.action == 'merge' %]fusion
+          [% ELSE %]modification[% END %] 
+        </td>
+        <td>[% a.avant %]</td>
+        <td>[% a.apres %]</td>
+      </tr>
+    [% END %]
+  </tbody>
+</table>
+
+<script>
+function copyToClipboard(value) {
+  var $temp = $("<input>");
+  $("body").append($temp);
+  $temp.val(value).select();
+  document.execCommand("copy");
+  $temp.remove();
+}
+
+$(document).ready(() => {
+  $('#table_realign').DataTable($.extend(true, {}, dataTablesDefaults, {
+    "aaSorting": [[ 1, "asc" ]],
+    "paginationType": "full",
+  }));});
+</script>
+
+[% INCLUDE "$PLUGIN_DIR/foot.tt" %]
