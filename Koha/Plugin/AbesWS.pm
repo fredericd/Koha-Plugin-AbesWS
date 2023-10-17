@@ -9,9 +9,11 @@ use C4::Biblio;
 use Koha::Cache;
 use Mojo::UserAgent;
 use Mojo::JSON qw(decode_json encode_json);
+use JSON qw/ to_json from_json /;
 use Template;
 use Encode qw/ decode /;
 use MARC::Moose::Record;
+use Pithub::Markdown;
 use YAML;
 
 
@@ -304,6 +306,17 @@ sub tool {
     }
     else {
         $template = $self->get_template({ file => 'home.tt' });
+        my $text = $self->mbf_read("home.md");
+        utf8::decode($text);
+        my $response = Pithub::Markdown->new->render(
+            data => {
+                text => $text,
+                context => "github/gollum",
+            },
+        );
+        my $markdown = $response->raw_content;
+        utf8::decode($markdown);
+        $template->param( markdown => $markdown );
     }
     $template->param( c => $self->config() );
     $template->param( WS => $ws ) if $ws;

@@ -288,7 +288,7 @@ function pageDetail() {
     `);
     getBibsFromPpn(ppn, (bibs) => {
       let html = '<div style="padding-top:10px;">' +
-      '<h4><img src="http://www.sudoc.abes.fr/~c_psi/psi_images/img_psi/3.0/icons/sudoc.png"/> Localisation</h4>' +
+      '<h4><img src="https://www.sudoc.abes.fr/~c_psi/psi_images/img_psi/3.0/icons/sudoc.png"/> Localisation</h4>' +
       '<ul>' +
       bibs.map((bib) => {
         let style = bib.itsme
@@ -303,6 +303,7 @@ function pageDetail() {
     });
   }
 }
+
 
 function opacDetailPublication() {
   $('span.idref-link').each(function(index){
@@ -390,6 +391,7 @@ function opacDetailPublication() {
     });
 }
 
+
 function run(conf) {
   c = conf;
   if (c?.idref.catalog.enabled && $('body').is("#cat_addbiblio")) {
@@ -399,7 +401,6 @@ function run(conf) {
   } else if (c?.idref?.opac?.publication?.enabled && $('body').is('#opac-detail')) {
     opacDetailPublication();
   }
-
 }
 
 $.extend({
