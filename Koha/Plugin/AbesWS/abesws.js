@@ -100,19 +100,23 @@ function escapeHtml(texte) {
 
 function parseMarcHeading(xml) {
   const fields = [];
+  const withNewline = xml.indexOf("\n") > 0 ? true : false;
   while (1) {
     let pos = xml.indexOf('<datafield tag="2');
     if (pos === -1) break;
-    xml = xml.substring(pos+40);
+    xml = xml.substring(withNewline ? pos+40 : pos+39);
     pos = xml.indexOf('</datafield>');
     let raw = xml.substring(0, pos-3);
     xml = xml.substring(pos+3);
+    raw = raw.replaceAll('><', ">\n<");
     const lines = raw.split("\n");
     const field = {};
     lines.forEach((line) => {
-      const letter = line.substr(20, 1);
-      let value = line.substr(23);
-      value = value.substr(0, value.length-11);
+      pos = line.indexOf('code=');
+      const letter = line.substr(pos+6, 1);
+      let value = line.substr(pos+9);
+      pos = value.indexOf('<');
+      value = value.substr(0, pos);
       field[letter] = value;
     });
     fields.push(field);
@@ -135,18 +139,14 @@ function parseMarcHeading(xml) {
 }
 
 function traiteResultat(e) {
-  console.log("traiteResultat");
   let data = e.data;
   data = serializer.parse(data);
-  console.log(data);
 
   const ppn = data.b;
   if (ppn === undefined) return;
   current.set('3', ppn);
 
   const field = parseMarcHeading(data.f);
-  console.log("field");
-  console.log(field);
   ['a','b','c','d','e','f','g','h','p'].forEach((letter) => {
     const value = field[letter] || '';
     if (value) current.set(letter, value);

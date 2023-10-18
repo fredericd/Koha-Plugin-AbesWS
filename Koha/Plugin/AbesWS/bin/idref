@@ -4,7 +4,7 @@ use Modern::Perl;
 use utf8;
 use FindBin qw( $Bin );
 say $Bin;
-use lib "$Bin/../../../../../";
+use lib "$Bin/../../../../";
 use Koha::Plugin::AbesWS;
 use YAML qw/ Dump /;
 use Try::Tiny;
