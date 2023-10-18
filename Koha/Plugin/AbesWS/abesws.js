@@ -270,22 +270,25 @@ function getBibsFromPpn(ppn, cb) {
 }
 
 function pageDetail() {
-  if ( c.detail.location ) {
-    const ppn = $(c.detail.ppn_selector).text();
-    if (ppn === '') {
-      console.log('PPN non trouvé. Manque-t-il le sélecteur PPN ?');
-      return;
-    }
-    $('.nav-tabs').append(`
-      <li role="presentation">
-        <a href="#sudoc" aria-controls="sudoc" role="tab" data-toggle="tab" aria-expanded="false">Sudoc</a>
-      </li>
-    `);
-    $('#bibliodetails .tab-content').append(`
-      <div role="tabpanel" class="tab-pane" id="sudoc">
-        <div id="sudoc-content"></div>
+  const ppn = $(c.detail.ppn_selector).text();
+  if (ppn === '') {
+    console.log('PPN non trouvé. Manque-t-il le sélecteur PPN ?');
+    return;
+  }
+  $('.nav-tabs').append(`
+    <li role="presentation">
+      <a href="#abes" aria-controls="abes" role="tab" data-toggle="tab" aria-expanded="false">AbesWS</a>
+    </li>
+  `);
+  $('#bibliodetails .tab-content').append(`
+    <div role="tabpanel" class="tab-pane" id="abes">
+      <div id="abes-content">
+        <div id="abes-publications"></div>
+        <div id="abes-qualimarc"></div>
       </div>
-    `);
+    </div>
+  `);
+  if ( c.detail.location ) {
     getBibsFromPpn(ppn, (bibs) => {
       let html = '<div style="padding-top:10px;">' +
       '<h4><img src="https://www.sudoc.abes.fr/~c_psi/psi_images/img_psi/3.0/icons/sudoc.png"/> Localisation</h4>' +
@@ -294,12 +297,61 @@ function pageDetail() {
         let style = bib.itsme
           ? "background: green; color: white;"
           : '';
-        let shortname = '<a href="http://www.sudoc.abes.fr/cbs/xslt//DB=2.1/SET=1/TTL=1/CLK?IKT=8888&TRM='
+        let shortname = '<a href="http://www.abes.abes.fr/cbs/xslt//DB=2.1/SET=1/TTL=1/CLK?IKT=8888&TRM='
           + bib.rcr + '" target="_blank" style="' + style + '">' + bib.shortname + '</a>';
         return '<li>' + shortname + '</li>'
       }).join('') +
       '</ul></div>';
-      $('#sudoc-content').html(html);
+      $('#abes-publications').html(html);
+    });
+  }
+  if (c.detail.qualimarc.enabled) {
+    const url = `${c.url.qualimarc}/check`;
+    console.log(url);
+    const query = `{
+      "ppnList": ["${ppn}"],
+      "typeAnalyse":"${c.detail.qualimarc.analyse}"
+    }`;
+    $.ajax(url, {
+      data: query,
+      contentType: 'application/json',
+      type: 'POST'
+    }).done(function(res) {
+      console.log("fait");
+      console.log(res);
+      let html = `
+        <div style="padding-top:10px;">
+          <h4>QualiMarc</h3>`;
+      if (res.ppnErrones.length > 0) {
+        const erreurs = res.resultRules[0].detailerreurs.sort((a, b) => {
+          const aa = a.priority + a.zones[0];
+          const bb = b.priority + b.zones[0];
+          return aa.localeCompare(bb);
+        });
+        html += `
+          <table>
+            <thead>
+              <tr>
+                <td>Zone</td>
+                <td>Avertissement</td>
+                <td>Priorité</td>
+              </tr>
+            </thead>
+            <tbody>`;
+        erreurs.forEach(err => {
+          html += `
+            <tr>
+              <td>${err.zones.join(' / ')}</td>
+              <td>${err.message}</td>
+              <td>${err.priority}</td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+      } else {
+        html += "<p>Notice sans erreur</p>";
+      }
+      html += "</div>";
+      $('#abes-qualimarc').html(html);
     });
   }
 }
@@ -394,7 +446,7 @@ function opacDetailPublication() {
 
 function run(conf) {
   c = conf;
-  if (c?.idref.catalog.enabled && $('body').is("#cat_addbiblio")) {
+  if (c?.idref?.catalog?.enabled && $('body').is("#cat_addbiblio")) {
     pageCatalog();
   } else if (c?.detail?.enabled && $('body').is("#catalog_detail")) {
     pageDetail();

@@ -11,15 +11,19 @@
   <legend>Accès aux WS</legend>
   <ol>
    <li>
-    <label for="url.api">Services web :</label>
+    <label for="url.api">Services web:</label>
     <input id="url.api" type="text" name="url.api" size="50" value="[% c.url.api %]" />
    </li>
    <li>
-    <label for="url.algo">URL du service : </label>
+    <label for="url.algo">URL du service: </label>
     <input id="url.algo" type="text" name="url.algo" size="40" value="[% c.url.algo %]" />
    </li>
    <li>
-    <label for="url.timeout">Timeout en secondes :</label>
+    <label for="url.qualimarc">URL du service: </label>
+    <input id="url.qualimarc" type="text" name="url.qualimarc" size="40" value="[% c.url.qualimarc %]" />
+   </li>
+   <li>
+    <label for="url.timeout">Timeout en secondes:</label>
     <input id="url.timeout" type="text" name="url.timeout" size="50" value="[% c.url.timeout %]" />
    </li>
   </ol>
@@ -29,25 +33,25 @@
   <legend>Établissement</legend>
   <ol>
    <li>
-    <label for="iln.iln">ILN : </label>
+    <label for="iln.iln">ILN: </label>
     <input id="iln.iln" type="text" name="iln.iln" size="15" value="[% c.iln.iln %]" />
    </li>
    <li>
-    <label for="iln.rcr">RCR : </label>
+    <label for="iln.rcr">RCR: </label>
     <textarea id="iln.rcr" name="iln.rcr" rows="5" cols="100">[% c.iln.rcr %]</textarea>
     <p>
       Pour les établissements ayant plusieurs RCR (bibliothèques), séparer les ILN
       par des retours à la ligne. Sur chaque ligne contenant un RCR, il est possible
       de faire suivre le RCR du nom en clair de la bibliothèque, précédé d'un espace.
-      Par exemple : <code>341725201 ABES - Centre de doc</code>
+      Par exemple: <code>341725201 ABES - Centre de doc</code>
     </p>
    </li>
    <li>
-    <label for="iln.ppn">Champ PPN : </label>
+    <label for="iln.ppn">Champ PPN: </label>
     <input id="iln.ppn" type="text" name="iln.ppn" size="15" value="[% c.iln.ppn %]" />
     <p>
       Le champ Koha contenant le PPN. Ce doit être un champ de la base de données MySQL/MariaDB
-      qui est lié à la zone Unimarc contenant le PPN Sudoc. Généralement : <b>biblioitems.lccn</b>
+      qui est lié à la zone Unimarc contenant le PPN Sudoc. Généralement: <b>biblioitems.lccn</b>
       que l'on lie à la zone contenant le PPN (001, 009, 099$p).
    </li>
   </ol>
@@ -57,22 +61,22 @@
   <legend>bibliocontrol</legend>
   <ol>
    <li>
-    <label for="bibliocontrol.t225">Zone 225 : </label>
+    <label for="bibliocontrol.t225">Zone 225: </label>
     <input id="bibliocontrol.t225" type="checkbox" name="bibliocontrol.t225" size="15" value="1" [% IF c.bibliocontrol.t225 == 1 %]checked[% END %] />
     Présence d'une zone 225 esseulée
    </li>
    <li>
-    <label for="bibliocontrol.f000">Fonction 000 : </label>
+    <label for="bibliocontrol.f000">Fonction 000: </label>
     <input id="bibliocontrol.f000" type="checkbox" name="bibliocontrol.f000" size="15" value="1" [% IF c.bibliocontrol.f000 == 1 %]checked[% END %] />
     Code fonction 000 en 700, 701 ou 702
    </li>
    <li>
-    <label for="bibliocontrol.t181">Zone 181 : </label>
+    <label for="bibliocontrol.t181">Zone 181: </label>
     <input id="bibliocontrol.t181" type="checkbox" name="bibliocontrol.t181" size="15" value="1" [% IF c.bibliocontrol.t181 == 1 %]checked[% END %] />
     Présence simultanée d'une zone 181 et d'une sous-zone 200$b
    </li>
    <li>
-    <label for="bibliocontrol.link_koha">Lien vers Koha : </label>
+    <label for="bibliocontrol.link_koha">Lien vers Koha: </label>
     <select id="bibliocontrol.link_koha" name="bibliocontrol.link_koha">
      <option value="marc" [% IF c.bibliocontrol.link_koha == 'marc' %]selected[% END %]>Vue MARC</option>
      <option value="normale" [% IF c.bibliocontrol.link_koha == 'normale' %]selected[% END %]>Vue Normale</option>
@@ -82,26 +86,39 @@
  </fieldset>
 
  <fieldset class="rows">
-  <legend>Page détail</legend>
+  <legend>PRO Page détail</legend>
   <ol>
    <li>
-    <label for="detail.enabled">Activer : </label>
+    <label for="detail.enabled">Activer: </label>
     <input id="detail.enabled" type="checkbox" name="detail.enabled" size="15" value="1" [% IF c.detail.enabled == 1 %]checked[% END %] />
-    Affichage d'infos provenant du Sudoc sur la page de détail des notices biblio
+    Affichage d'infos provenant de l'ABES sur la page de détail des notices biblio
    </li>
    <li>
-    <label for="detail.location">Localisation : </label>
-    <input id="detail.location" type="checkbox" name="detail.location" size="15" value="1" [% IF c.detail.location == 1 %]checked[% END %] />
-    Les localisations (RCR) de la notice
-   </li>
-    <label for="detail.ppn_selector">Sélecteur PPN : </label>
+    <label for="detail.ppn_selector">Sélecteur PPN: </label>
     <input id="detail.ppn_selector" type="text" name="detail.ppn_selector" size="15" value="[% c.detail.ppn_selector %]" />
     <p>
       Sélecteur jQuery permettant de retrouver le PPN dans la page de détail. C'est la feuille
       de style XSL de la page de détail de l'interface pro qui affiche et rend accessible
       le PPN. Par exemple, <b>#ppn_value</b>.
     </p>
-    </li>
+   </li>
+   <li>
+    <label for="detail.location">Localisation: </label>
+    <input id="detail.location" type="checkbox" name="detail.location" size="15" value="1" [% IF c.detail.location == 1 %]checked[% END %] />
+    Les localisations (RCR) de la notice
+   </li>
+   <li>
+    <label for="detail.qualimarc.enabled">QualiMarc: </label>
+    <input id="detail.qualimarc.enabled" type="checkbox" name="detail.qualimarc.enabled" size="15" value="1" [% IF c.detail.qualimarc.enabled == 1 %]checked[% END %] />
+    Analyse de la notice par QualiMarc
+   </li>
+   <li>
+    <label for="detail.qualimarc.analyse">Analyse: </label>
+    <select id="detail.qualimarc.analyse" name="detail.qualimarc.analyse">
+     <option value="QUICK" [% IF c.detail.qualimarc.analyse == 'QUICK' %]selected[% END %]>RAPIDE</option>
+     <option value="COMPLETE" [% IF c.detail.qualimarc.analyse == 'COMPLETE' %]selected[% END %]>COMPLÈTE</option>
+    </select>
+   </li>
   </ol>
  </fieldset>
 
@@ -109,11 +126,11 @@
   <legend>IdRef</legend>
   <ol>
    <li>
-    <label for="idref.url">Point d'accès : </label>
+    <label for="idref.url">Point d'accès: </label>
     <input id="idref.url" type="input" name="idref.url" size="50" value="[% c.idref.url %]" />
    </li>
    <li>
-    <label for="idref.idclient">ID Client : </label>
+    <label for="idref.idclient">ID Client: </label>
     <input id="idref.idclient" type="input" name="idref.idclient" size="50" value="[% c.idref.idclient %]" />
     <p>
       Indentifiant de votre instance de Koha. Cet identifiant servira à
@@ -127,12 +144,12 @@
   <legend>PRO Catalogage</legend>
   <ol>
    <li>
-    <label for="idref.catalog.enabled">Activer : </label>
+    <label for="idref.catalog.enabled">Activer: </label>
     <input id="idref.catalog.enabled" type="checkbox" name="idref.catalog.enabled" size="15" value="1" [% IF c.idref.catalog.enabled == 1 %]checked[% END %] />
     la recherche dans IdRef depuis la page de Catalogage
    </li>
    <li>
-    <label for="idref.catalog.fields">Champs : </label>
+    <label for="idref.catalog.fields">Champs: </label>
     <textarea id="idref.catalog.fields" name="idref.catalog.fields" rows="5" cols="100">[% c.idref.catalog.fields %]</textarea>
     <p>
       Entrez ici la liste des champs Unimarc pour lesquelles vous voulez lancer des recherches
@@ -147,7 +164,7 @@
   <legend>OPAC IdRef</legend>
   <ol>
    <li>
-    <label for="idref.opac.publication.enabled">Activer : </label>
+    <label for="idref.opac.publication.enabled">Activer: </label>
     <input id="idref.opac.publication.enabled" type="checkbox" name="idref.opac.publication.enabled" size="15" value="1" [% IF c.idref.opac.publication.enabled == 1 %]checked[% END %] />
     Affichage à l'OPAC des infos provenant du service web <a href="https://documentation.abes.fr/aideidrefdeveloppeur/index.html#MicroWebBiblio">Biblio</a>
     de IdRef.
@@ -156,11 +173,11 @@
    <p>
      Votre feuille de style de la page de détail de l'OPAC doit être modifiée
      pour afficher une balise span contenant le PPN de l'auteur dont on affiche
-     les publications. Par exemple :
+     les publications. Par exemple:
    </p>
    <xmp><span class="idref-link" ppn="124680866"/></xmp>
    <p>
-     Ce qui revient à ajouter le code suivant à votre feuille XSL :</p>
+     Ce qui revient à ajouter le code suivant à votre feuille XSL:</p>
    <xmp><xsl:if test="marc:subfield[@code=3]">
   <span class="idref-link">
     <xsl:attribute name="ppn">
@@ -169,7 +186,7 @@
   </span>
 </xsl:if></xmp>
    <li>
-    <label for="idref.opac.publication.expiry">Expiration en secondes :</label>
+    <label for="idref.opac.publication.expiry">Expiration en secondes:</label>
     <input id="idref.opac.publication.expiry" type="text" name="idref.opac.publication.expiry" size="50" value="[% c.idref.opac.publication.expiry %]" />
    </li>
   </ol>

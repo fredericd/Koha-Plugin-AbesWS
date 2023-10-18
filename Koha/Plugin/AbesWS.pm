@@ -121,8 +121,9 @@ sub config {
     $c->{url} ||= {};
     $c->{url}->{api} ||= 'https://www.sudoc.fr/services';
     $c->{url}->{algo} ||= 'https://www.idref.fr/AlgoLiens';
+    $c->{url}->{qualimarc} ||= 'https://qualimarc.sudoc.fr/api/v1';
     $c->{url}->{timeout} ||= 600;
-
+    $c->{detail}->{qualimarc}->{analyse} ||= 'COMPLETE';
     $c->{idref} ||= {};
     $c->{idref}->{url} ||= 'https://www.idref.fr';
     $c->{idref}->{idclient} ||= 'tamil';
@@ -152,9 +153,10 @@ sub get_form_config {
     my $cgi = shift;
     my $c = {
         url => {
-            api     => undef,
-            algo    => undef,
-            timeout => undef,
+            api       => undef,
+            algo      => undef,
+            qualimarc => undef,
+            timeout   => undef,
         },
         iln => {
             iln => undef,
@@ -169,8 +171,12 @@ sub get_form_config {
         },
         detail => {
             enabled => 0,
-            location => 0,
             ppn_selector => undef,
+            location => 0,
+            qualimarc => {
+                enabled => 0,
+                analyse => undef,
+            },
         },
         idref => {
             url => undef,
