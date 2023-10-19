@@ -23,7 +23,7 @@ points suivants :
 
 **📁 TÉLÉCHARGEMENT** — Récupérez sur le site [Tamil](https://www.tamil.fr)
 l'archive de l'Extension
-**[AbesWS](https://www.tamil.fr/download/koha-plugin-abesws-1.0.2.kpz)**.
+**[AbesWS](https://www.tamil.fr/download/koha-plugin-abesws-1.0.3.kpz)**.
 
 Dans l'interface pro de Koha, allez dans `Outils > Outils de Plugins`. Cliquez
 sur Télécharger un plugin. Choisissez l'archive **téléchargée** à l'étape
@@ -262,7 +262,7 @@ qui renvoie :
 
 ## VERSIONS
 
-* **1.0.2** / octobre 2023 - Version initiale
+* **1.0.3** / octobre 2023 - Version initiale
 
 ## LICENCE
 

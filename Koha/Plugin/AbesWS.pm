@@ -28,7 +28,7 @@ our $metadata = {
     minimum_version => '22.11.00.000',
     maximum_version => undef,
     copyright       => '2023',
-    version         => '1.0.2',
+    version         => '1.0.3',
 };
 
 
