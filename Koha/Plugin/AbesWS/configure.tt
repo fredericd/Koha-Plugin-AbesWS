@@ -15,12 +15,24 @@
     <input id="url.api" type="text" name="url.api" size="50" value="[% c.url.api %]" />
    </li>
    <li>
-    <label for="url.algo">URL du service: </label>
+    <label for="url.algo">URL AlgoLien: </label>
     <input id="url.algo" type="text" name="url.algo" size="40" value="[% c.url.algo %]" />
    </li>
    <li>
-    <label for="url.qualimarc">URL du service: </label>
+    <label for="url.qualimarc">URL QualiMarc: </label>
     <input id="url.qualimarc" type="text" name="url.qualimarc" size="40" value="[% c.url.qualimarc %]" />
+   </li>
+   <li>
+    <label for="idref.url">URL IdRef: </label>
+    <input id="idref.url" type="input" name="idref.url" size="50" value="[% c.idref.url %]" />
+   </li>
+   <li>
+    <label for="idref.idclient">IdRef ID Client: </label>
+    <input id="idref.idclient" type="input" name="idref.idclient" size="50" value="[% c.idref.idclient %]" />
+    <p>
+      Indentifiant de votre instance de Koha. Cet identifiant servira à
+      identifier vos accès à IdRef auprès de l'ABES pour un usage statistique.
+    </p>
    </li>
    <li>
     <label for="url.timeout">Timeout en secondes:</label>
@@ -123,24 +135,6 @@
  </fieldset>
 
  <fieldset class="rows">
-  <legend>IdRef</legend>
-  <ol>
-   <li>
-    <label for="idref.url">Point d'accès: </label>
-    <input id="idref.url" type="input" name="idref.url" size="50" value="[% c.idref.url %]" />
-   </li>
-   <li>
-    <label for="idref.idclient">ID Client: </label>
-    <input id="idref.idclient" type="input" name="idref.idclient" size="50" value="[% c.idref.idclient %]" />
-    <p>
-      Indentifiant de votre instance de Koha. Cet identifiant servira à
-      identifier vos accès à IdRef auprès de l'ABES pour un usage statistique.
-    </p>
-   </li>
-  </ol>
- </fieldset>
-
- <fieldset class="rows">
   <legend>PRO Catalogage</legend>
   <ol>
    <li>
@@ -159,9 +153,8 @@
   </ol>
  </fieldset>
 
-
  <fieldset class="rows">
-  <legend>OPAC IdRef</legend>
+  <legend>OPAC Page detail</legend>
   <ol>
    <li>
     <label for="idref.opac.publication.enabled">Activer: </label>

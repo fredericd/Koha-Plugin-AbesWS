@@ -30,8 +30,8 @@ sur Télécharger un plugin. Choisissez l'archive **téléchargée** à l'étape
 précédente. Cliquez sur Télécharger.
 
 Le plugin utilise par ailleurs deux modules Perl qu'on ne trouve pas en
-standard avec Koha : `MARC::Moose::Record` et `Pithub::Markdown`. Il faut les
-installer sur votre serveur Koha.
+standard avec Koha : `MARC::Moose` et `Pithub::Markdown`. Il faut les installer
+sur votre serveur Koha.
 
 ## Utilisation du plugin
 
@@ -43,7 +43,14 @@ Actions > Configurer.
 Plusieurs sections pilotent le fonctionnement du plugin :
 
 - **Accès aux WS** — Paramètres d'accès aux services web. Il n'est pas
-  nécessaire de modifier les paramètres par défaut.
+  nécessaire de modifier les paramètres par défaut. Précisions pour IdRef:
+  - **URL IdRef** — L'URL du point d'accès à IdRef. Par défaut
+    `https://www.idref.fr`. En phase de test, on peut obtenir de l'ABES une
+    autre URL.
+  - **ID Client** — Identifiant de l'établissement utilisant les services web
+    de l'ABES. Cet identifiant permet à l'ABES de tenir à jour des statistiques
+    d'usage de ses services par établissement.
+
 
 - **Établissement** — L'ILN et les RCR de l'ILN. Les services web ne seront
   interrogés que pour cet ILN et ces RCR. Pour les RCR, il faut entrer la liste de ses
@@ -72,10 +79,10 @@ Plusieurs sections pilotent le fonctionnement du plugin :
 
   On choisit ici les anomalies à afficher.
 
-- **PRO détail** — Dans la page détail d'une notice bibliographique affichée
-  dans l'interface PRO de Koha, on peut récupérer et afficher des informations
-  complémentaires obtenues au moyen des services web de l'ABES. Pour le moment,
-  on dispose des options suivantes :
+- **PRO Page détail** — Dans la page détail d'une notice bibliographique
+  affichée dans l'interface PRO de Koha, on peut récupérer et afficher des
+  informations complémentaires obtenues au moyen des services web de l'ABES.
+  Pour le moment, on dispose des options suivantes :
 
   - **Activer** — pour activer l'affichage d'infos provenant du Sudoc sur la
     page de détail des notices biblio
@@ -85,15 +92,10 @@ Plusieurs sections pilotent le fonctionnement du plugin :
     page de détail. C'est la feuille de style XSL de la page de détail de
     l'interface pro qui affiche et rend accessible le PPN. Par exemple,
     `#ppn_value`.
-
-- **IdRef** — Les infos permettant d'établir un lien au service IdRef de
-  l'ABES:
-  - **Point d'accès** — L'URL du pont d'accès à IdRef. Par défaut
-    `https://www.idref.fr`. En phase de test, on peut obtenir de l'ABES une
-    autre URL.
-  - **ID Client** — Identifiant de l'établissement utilisant les services web
-    de l'ABES. Cet identifiant permet à l'ABES de tenir à jour des statistiques
-    d'usage de ses services par établissement.
+  - **QualiMarc** — Analyse de la notice avec
+    [QualiMarc](https://qualimarc.sudoc.fr), l'outil d'analyse des notices
+    bibliographiques du Sudoc.
+  - **Analyse** — Niveau d'analyse QualiMarc, rapide ou complète.
 
 - **IdRef PRO Catalogage** — Fonctionnement du plugin dans la page de catalogage de
   Koha:
@@ -147,20 +149,12 @@ AlgoLiens.
 
 ### PRO Détail
 
-Si on a activé l'affichage d'infos Sudoc sur la page de détail des notices
-bibliographiques de l'interface PRO, le service web _multiwhere_ de l'ABES est
-appelé pour chaque notice qui dispose d'un PPN. Un onglet **Sudoc** est ajouté
-au tableau des exemplaires qui est affiché sous la notice bibliographique. Dans
-cet onglet, les localisations de la notice dans les établissements Sudoc sont
-affichées. Chaque établissement est un lien vers la page Sudoc du RCR : nom de
-établissement, adresse, téléphone, etc.
-
 On active cette fonctionnalité dans la page de configuration du plugin. Le
 paramètre **Sélecteur PPN** doit être renseigné. Il permet au plugin de
-localiser le PPN à l'affichage sur la page de détail. La feuille de style XSL
-d'affichage doit être adaptée en conséquence. Par exemple, si on a le PPN dans
-le tag 009 et si on définit un sélecteur PPN **#ppn_value**, la feuille de style
-devra contenir quelque chose qui ressemble à ceci :
+localiser le PPN sur la page de détail. La feuille de style XSL d'affichage
+doit être adaptée en conséquence. Par exemple, si on a le PPN dans le tag 009
+et si on définit un sélecteur PPN **#ppn_value**, la feuille de style devra
+contenir quelque chose qui ressemble à ceci :
 
 ```xml
 <xsl:if test="marc:controlfield[@tag=009]">
@@ -172,6 +166,16 @@ devra contenir quelque chose qui ressemble à ceci :
   </span>
 </xsl:if>
 ```
+
+**Localisation** — Si on a activé l'affichage des localisations Sudoc, le
+service web _multiwhere_ de l'ABES est appelé pour chaque notice qui dispose
+d'un PPN. Les localisations de la notice dans les établissements Sudoc sont
+affichées sont affichées dans l'onglet _AbesWS_. Chaque établissement est un
+lien vers la page Sudoc du RCR : nom de établissement, adresse, téléphone, etc.
+
+**QualiMarc** — En activant l'option [QualiMarc](https://qualimarc.sudoc.fr),
+l'API de l'outil d'analyse de l'ABES est appelé avec le PPN de la notice
+courante. Le résultat de cette analyse est placé dans l'onglet _AbesWS_.
 
 ### OPAC Publications IdRef
 
