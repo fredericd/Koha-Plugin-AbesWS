@@ -525,7 +525,7 @@ sub realign {
                     $modified = 1;
                 }
                 my $field_match = join(' ',
-                    map { $_->[1] } grep { $_->[0] =~ /[abcf]/ } @{$field->subf});
+                    map { $_->[1] } grep { $_->[0] =~ /[abcdfg]/ } @{$field->subf});
                 # Récupération de la vedette, en écriture latine (frefre en $8)
                 my @heading = $auth->field('2..');
                 my $heading;
@@ -545,7 +545,7 @@ sub realign {
                     exit;
                 }
                 my $heading_match = join(' ',
-                    map { $_->[1] } grep { $_->[0] =~ /[abcf]/ }  @{$heading->subf} );
+                    map { $_->[1] } grep { $_->[0] =~ /[abcdfg]/ }  @{$heading->subf} );
                 if ($field_match ne $heading_match) {
                     #say $field->as_formatted;
                     #say $heading->as_formatted;
@@ -554,9 +554,9 @@ sub realign {
                         ppn => $new_ppn || $ppn,
                         avant => $field->as_formatted,
                     };
-                    my @subf = grep { $_->[0] !~ /[abcf]/ } @{$field->subf};
+                    my @subf = grep { $_->[0] !~ /[abcdfg]/ } @{$field->subf};
                     for (@{$heading->subf}) {
-                        next if $_->[0] !~ /[abcf]/;
+                        next if $_->[0] !~ /[abcdfg]/;
                         push @subf, $_;
                     }
                     $field->subf( \@subf );
