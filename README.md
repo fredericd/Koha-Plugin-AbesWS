@@ -5,9 +5,9 @@ web de l'ABES. L'intégration à Koha de services web de l'ABES vise deux
 objectifs distincts et complémentaires :
 
 - **Enrichissement de l'affichage** — L'affichage des notices dans Koha est
-  enrichies de données récupérées en temps réel à l'Abes.
+  enrichi de données récupérées en temps réel à l'Abes.
 
-- **Contrôles rétrospectif** — Des listes d'anomalies de catalogage sont
+- **Contrôles rétrospectifs** — Des listes d'anomalies de catalogage sont
   affichées. À partir de ces listes, des opérations de correction peuvent être
   lancées.
 
@@ -25,7 +25,7 @@ points suivants :
 l'archive de l'Extension
 **[AbesWS](https://www.tamil.fr/download/koha-plugin-abesws-1.0.3.kpz)**.
 
-Dans l'interface pro de Koha, allez dans `Outils > Outils de Plugins`. Cliquez
+Dans l'interface PRO de Koha, allez dans `Outils > Outils de Plugins`. Cliquez
 sur Télécharger un plugin. Choisissez l'archive **téléchargée** à l'étape
 précédente. Cliquez sur Télécharger.
 
@@ -51,10 +51,10 @@ Plusieurs sections pilotent le fonctionnement du plugin :
     de l'ABES. Cet identifiant permet à l'ABES de tenir à jour des statistiques
     d'usage de ses services par établissement.
 
-
-- **Établissement** — L'ILN et les RCR de l'ILN. Les services web ne seront
-  interrogés que pour cet ILN et ces RCR. Pour les RCR, il faut entrer la liste de ses
-  RCR, suivi pour chacun du nom en clair de la bibliothèque. Par exemple :
+- **Établissement** — L'ILN et les RCR de l'ILN. Les services web
+  _bibliocontrol_ et _AlgoLien_ ne seront interrogés que pour cet ILN et ces
+  RCR. Pour les RCR, il faut entrer la liste de ses RCR, suivi pour chacun du
+  nom en clair de la bibliothèque. Par exemple :
 
   ```text
   341722102 BIU Montpellier - Droit, Science po, Eco et Gestion
