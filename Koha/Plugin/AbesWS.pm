@@ -24,11 +24,11 @@ our $metadata = {
     description     => 'Utilisation de services web Abes',
     author          => 'Tamil s.a.r.l.',
     date_authored   => '2023-10-16',
-    date_updated    => "2023-10-18",
+    date_updated    => "2023-10-22",
     minimum_version => '22.11.00.000',
     maximum_version => undef,
     copyright       => '2023',
-    version         => '1.0.3',
+    version         => '1.0.4',
 };
 
 
@@ -167,6 +167,9 @@ sub get_form_config {
             t225 => 0,
             f000 => 0,
             t181 => 0,
+            link_koha => 'marc',
+        },
+        algolien => {
             link_koha => 'marc',
         },
         detail => {

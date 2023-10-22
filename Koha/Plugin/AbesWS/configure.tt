@@ -98,6 +98,19 @@
  </fieldset>
 
  <fieldset class="rows">
+  <legend>AlgoLien</legend>
+  <ol>
+   <li>
+    <label for="algolien.link_koha">Lien vers Koha: </label>
+    <select id="algolien.link_koha" name="algolien.link_koha">
+     <option value="marc" [% IF c.algolien.link_koha == 'marc' %]selected[% END %]>Vue MARC</option>
+     <option value="normale" [% IF c.algolien.link_koha == 'normale' %]selected[% END %]>Vue Normale</option>
+    </select>
+   </li>
+  </ol>
+ </fieldset>
+
+ <fieldset class="rows">
   <legend>PRO Page détail</legend>
   <ol>
    <li>

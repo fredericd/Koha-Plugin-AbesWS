@@ -65,7 +65,7 @@
       <td>[% tdoc_hash.$tdoc %]</td>
       <td>[% rec.date %]
       <td>
-        <a href="/cgi-bin/koha/catalogue/MARCdetail.pl?biblionumber=[% rec.biblionumber %]"
+        <a href="/cgi-bin/koha/catalogue/[% IF c.algolien.link_koha == 'marc' %]MARC[% END %]detail.pl?biblionumber=[% rec.biblionumber %]"
            target="_blank" title="Notice Koha">[% rec.title %]</a>
       </td>
       <td>[% rec.where.join('; ') %]
