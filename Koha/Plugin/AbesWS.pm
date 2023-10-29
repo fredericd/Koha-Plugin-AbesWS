@@ -23,8 +23,8 @@ our $metadata = {
     canonicalname   => 'koha-plugin-abesws',
     description     => 'Utilisation de services web Abes',
     author          => 'Tamil s.a.r.l.',
-    date_authored   => '2023-10-16',
-    date_updated    => "2023-10-22",
+    date_authored   => '2023-10-29',
+    date_updated    => "2023-10-18",
     minimum_version => '22.11.00.000',
     maximum_version => undef,
     copyright       => '2023',
@@ -366,6 +366,7 @@ sub get_biblio_per_ppn {
     };
 }
 
+
 sub get_bibliocontrol {
     my ($self, $rcr) = @_;
 
@@ -406,6 +407,7 @@ sub get_bibliocontrol {
     return \@bibs;
 }
 
+
 sub get_algo {
     my ($self, $rcr, $tdoc) = @_;
 
@@ -441,19 +443,21 @@ sub get_algo {
     return \@recs;
 }
 
+
 sub realign {
     my $self = shift;
 
-    my ($from, $to, $doit) = (1, 999999999, 0);
+    my ($from, $to, $verbose, $doit) = (1, 999999999, 1, 0);
     while (@_) {
         $_ = shift;
         if    ( /^[0-9]*$/ )            { $from = $to = $_;        }
         elsif ( /^([0-9]+)-$/ )         { $from = $1;              }
         elsif ( /^-([0-9]+)$/ )         { $to = $1;                }
         elsif ( /^([0-9]+)-([0-9]+)$/ ) { ($from, $to) = ($1, $2); }
-        elsif ( /doit/i )               {  $doit = 1;              }
+        elsif ( /doit/i )               { $doit = 1;               }
+        elsif ( /noverbose/i)           { $verbose = 0;            }
     }
-    say "from: $from - to: $to";
+    say "from: $from - to: $to" if $verbose;
 
     my $start = DateTime->now;
 
@@ -488,7 +492,7 @@ sub realign {
         $idx_submit->() if @idx_ids == 1000;
     };
     while ( ($biblionumber, $metadata) = $sth->fetchrow ) {
-        say $biblionumber;
+        say $biblionumber if $verbose;
         my $record = MARC::Moose::Record::new_from($metadata, 'Marcxml');
         my $modified = 0;
         FIELDS_LOOP:
@@ -625,6 +629,57 @@ sub autorite {
     }
     open my $fh, '>', 'ppn.txt';
     say join("\n", keys %ppn);
+}
+
+
+sub marc_record_to_document {
+    my ($self, $params) = @_;
+
+    my $idx_field_to_tag = {
+        'author'                => [700, 701, 702, 710, 711, 712],
+        'author-name-personal'  => [700, 701, 702],
+        'author-name-corporate' => [710, 711, 712],
+    };
+    my $idx_tag_to_field;
+    while (my ($name, $tags) = each %$idx_field_to_tag) {
+        push @{$idx_tag_to_field->{$_}}, $name for @$tags;
+    }
+
+    my $c = $self->config();
+    my $cacheTimeout = 86400;
+    my $record = MARC::Moose::Record::new_from($params->{record}, 'Legacy');
+    my $doc = $params->{document};
+    my $cache = $self->{cache};
+    my $ua  = $self->{ua} ||= Mojo::UserAgent->new;
+
+    for my $field ($record->field('7..')) {
+        my $ppn = $field->subfield('3');
+        next unless $ppn;
+        my $xml = $cache->get_from_cache($ppn);
+        unless ($xml) {
+            my $url = "https://www.idref.fr/$ppn.xml";
+            my $res = $ua->get($url)->result;
+            if ($res->is_success) {
+                next if $res->headers->content_type !~ /xml/;
+                $xml = $res->body;
+                $cache->set_in_cache($ppn, $xml, { expiry => 5184000 });
+            }
+        }
+        next unless $xml;
+        my $auth = MARC::Moose::Record::new_from($xml, 'marcxml');
+        my @es = @{$idx_tag_to_field->{$field->tag}};
+        my @fields = $auth->field('2..');
+        my $append = sub {
+            for my $f (@fields) {
+                my @keep = grep { $_->[0] =~ /[ab]/ } @{$f->subf};
+                my $value = join(' ', map { $_->[1] } grep { $_->[0] =~ /[ab]/ } @{$f->subf});
+                push @{$doc->{$_}}, $value  for @es;
+            }
+        };
+        $append->() if @fields > 1;
+        @fields = $auth->field('4..|7..');
+        $append->();
+    }
 }
 
 
