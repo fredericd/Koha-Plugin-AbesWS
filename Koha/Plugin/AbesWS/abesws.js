@@ -230,7 +230,7 @@ function onClick(e, div) {
 function pageCatalog() {
   // On charge les éléments externes
   $('head').append('<link rel="stylesheet" type="text/css" href="/plugin/Koha/Plugin/AbesWS/subModal.css">');
-  console.log(c.idref.url);
+  //console.log(c.idref.url);
   window.gDefaultPage = c.idref.url;
   $.getScript("/plugin/Koha/Plugin/AbesWS/subModal.js")
    .done(() => {
@@ -369,29 +369,33 @@ function opacDetailPublication() {
   $('.idref-link-click').click(function(){
     const ppn = $(this).attr('ppn');
     const url = `/api/v1/contrib/abesws/biblio/${ppn}`;
-    console.log(url);
+    //console.log(url);
     jQuery.getJSON(url)
       .done((publications) => {
         let html;
         if (publications.name === '') {
-          html = __('Author not found in IdRef');
+          html = 'Auteur non trouvé dans IdRef';
         } else {
           const navig = publications.roles.map(role => `<a href="#idref-role-${role.code}" style="font-size: 90%;">${role.label} (${role.docs.length})</a>`);
-          let html_notes = '';
-          if (publications.notes) {
-            html_notes = `
-              <div style="font-size:100%; margin-bottom: 3px;">
-                ${publications.notes.join('<br/>')}
-              </div>`;
-          }
           html = `
             <h2>
               ${publications.name} / <small>
               <a href="https://www.idref.fr/${publications.ppn}" target="_blank">${publications.ppn}</a>
               </small>
-            </h2>
-            ${html_notes}
-            <div style="margin-bottom: 5px;";>${navig.join(' • ')}</div>`;
+            </h2>`;
+          if (publications.altnames) {
+            html += `
+              <div style="font-size:100%; margin-bottom: 3px;">
+                ${publications.altnames.join(' · ')}
+              </div>`;
+          }
+          if (publications.notes) {
+            html += `
+              <div style="font-size:100%; margin-bottom: 3px;">
+                ${publications.notes.join('<br/>')}
+              </div>`;
+          }
+          html += `<div style="margin-top: 0px; margin-bottom: 5px;";>${navig.join(' • ')}</div>`;
           publications.roles.forEach((role) => {
             html += `
               <h3 id="idref-role-${role.code}">${role.label}</h3>
@@ -401,12 +405,12 @@ function opacDetailPublication() {
                 <tr>
                   <td>
                   <a href="https://www.sudoc.fr/${doc.ppn}" target="_blank" rel="noreferrer">
-                  <img title="` + __('Publication In Sudoc Catalog') + `" src="/plugin/Koha/Plugin/AbesWS/img//sudoc.png" />
+                  <img title="Publications dans le Sudoc" src="/plugin/Koha/Plugin/AbesWS/img//sudoc.png" />
                   </a>`;
               if (doc.bib) {
                 html += `
                   <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=${doc.bib}" target="_blank">
-                  <img title="` + __('Publication In Local Catalog') + `" src="/opac-tmpl/bootstrap/images/favicon.ico" />
+                  <img title="Publications dans la catalogue local" src="/opac-tmpl/bootstrap/images/favicon.ico" />
                   </a>`;
               }
               html += `</td><td>${doc.citation}</td></tr>`;

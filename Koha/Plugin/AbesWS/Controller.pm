@@ -7,7 +7,7 @@ use Mojo::UserAgent;
 use Mojo::JSON qw(decode_json encode_json);
 use Koha::Plugin::AbesWS;
 use Search::Elasticsearch;
-use MARC::Record;
+use MARC::Moose::Record;
 use YAML;
 
 use Mojo::Base 'Mojolicious::Controller';
@@ -50,14 +50,21 @@ sub get {
         return $render->();
     }
     my $xml = $response->body;
-    my $record = MARC::Record->new_from_xml($xml, 'UTF-8', 'UNIMARC');
+    my $record = MARC::Moose::Record::new_from($xml, 'Marcxml');
+    my @names = map {
+        join(', ', map { $_->[1] } grep { $_->[0] =~ /[a-z]/ } @{$_->subf} )
+    } $record->field('2..');
+    my @altnames;
+    for my $field ($record->field('4..')) {
+        push @altnames, join(', ', map { $_->[1] } grep { $_->[0] =~ /[a-z]/ } @{$field->subf});
+    }
     my @notes;
     for my $field ($record->field('3..')) {
         push @notes, $field->subfield('a');
     }
 
     $url = "$url_base/services/biblio/$author_ppn.json";
-    $logger->warn("get $url");
+    #$logger->warn("get $url");
     $response = $ua->get($url)->result;
     if (!$response->is_success) {
         $logger->warn(Dump($response->message));
@@ -68,9 +75,9 @@ sub get {
     my $result = $json->{sudoc}->{result};
     return $render->() if $result->{countRoles} == 0;
 
-    $logger->warn("On requête ES");
-    $publications->{name} = $result->{name};
+    $publications->{name} = join(' / ', @names);
     $publications->{notes} = \@notes if @notes;
+    $publications->{altnames} = \@altnames if @altnames;
     $result->{role} = [ $result->{role} ] if ref($result->{role}) ne 'ARRAY';
     my $ppn;
     for my $r (@{$result->{role}}) {
