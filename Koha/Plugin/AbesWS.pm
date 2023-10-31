@@ -33,6 +33,14 @@ our $metadata = {
 
 
 my $conf = {
+    idref => {
+        idx_field_to_tag => {
+            'author'                => [700, 701, 702, 710, 711, 712],
+            'author-name-personal'  => [700, 701, 702],
+            'author-name-corporate' => [710, 711, 712],
+        },
+        cache_timeout => 86400,
+    },
     bibliocontrol => {
         errors => [
             'une 225 est presente sans 410 ni 461',
@@ -635,18 +643,14 @@ sub autorite {
 sub marc_record_to_document {
     my ($self, $params) = @_;
 
-    my $idx_field_to_tag = {
-        'author'                => [700, 701, 702, 710, 711, 712],
-        'author-name-personal'  => [700, 701, 702],
-        'author-name-corporate' => [710, 711, 712],
-    };
+    my $idx_field_to_tag = $conf->{idref}->{idx_field_to_tag};
     my $idx_tag_to_field;
     while (my ($name, $tags) = each %$idx_field_to_tag) {
         push @{$idx_tag_to_field->{$_}}, $name for @$tags;
     }
+    my $cache_timeout = $conf->{idref}->{cache_timeout};
 
     my $c = $self->config();
-    my $cacheTimeout = 86400;
     my $record = MARC::Moose::Record::new_from($params->{record}, 'Legacy');
     my $doc = $params->{document};
     my $cache = $self->{cache};
