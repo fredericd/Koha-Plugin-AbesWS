@@ -1,0 +1,67 @@
+[% INCLUDE "$PLUGIN_DIR/head.tt" %]
+[% INCLUDE 'datatables.inc' %]
+
+[% IF ppns %]
+ <h1>Fix PPN — Résultat</h1>
+ <table>
+  <thead>
+   <tr>
+    <td>Du PPN</td>
+    <td>Vers</td>
+    <td>Notices</td>
+   <tr>
+  </thead>
+  <tbody>
+   [% FOREACH ppn IN ppns %]
+    <tr>
+     <td>[% ppn.from %]</td>
+     <td>[% ppn.to %]</td>
+     <td>[% ppn.bn.join(', ') %]</td>
+    </tr>
+   [% END %]
+  </tbody>
+ </table>
+
+[% ELSE %]
+<h1>Fix PPN</h1>
+<p>
+ Depuis cette page, vous pouvez modifier par lots des PPN IdRef erronnés. Vous
+ donnez une liste de couple (a, b) de PPN : (a) est le PPN erronnés ; (b) est le
+ PPN à utiliser à la place de (a). Il y a deux modes de modification par lot,
+ global ou spécifique. Dans le mode global, toutes les notices biblio contenant
+ (a) sont modifiées. Dans le mode spécifique, seule une liste de notices
+ identifiées par leur biblionumber sont modifiées. Ces biblionumber sont
+ spécifiés à la suite de (a, b). Par exemple :</p>
+
+<ul>
+ <li>
+  <b><code>178043087 271891246</code></b> — Remplace dans toutes les notices du
+  catalogue le PPN <code>178043087</code> par le PPN <code>271891246</code>.
+ </li>
+ <li>
+  <b><code>085690481 034995145 27360 93414</code></b> — Remplace le PPN
+  <code>085690481</code> par le PPN <code>034995145</code> dans les notices
+  034995145 et 034995145.
+ </li>
+
+</ul>
+
+<form method="post">
+ <input type="hidden" name="class" value="[% CLASS %]"/>
+ <input type="hidden" name="method" value="[% METHOD %]"/>
+ <input type="hidden" name="ws" value="fixppn"/>
+
+ <p>Listes de modifications à effectuer :</p>
+ <pre><textarea id="ppntobn" name="ppntobn" rows="20" cols="120">[% ppntob %]</textarea></pre>
+
+ <label for="confirm">Confirmer le traitement: </label>
+ <input id="confirm" type="checkbox" name="confirm" size="15" value="1" />
+
+ <fieldset class="action">
+  <input type="hidden" name="save" value="1" />
+  <input type="submit" value="Lancer la modification" />
+ </fieldset>
+</form>
+[% END %]
+
+[% INCLUDE "$PLUGIN_DIR/foot.tt" %]

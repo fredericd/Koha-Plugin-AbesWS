@@ -262,6 +262,7 @@ qui renvoie :
 
 ## VERSIONS
 
+* **1.0.5** / novembre 2023 — Fonctionnalité pour corriger les PPN IdRef
 * **1.0.3** / octobre 2023 - Version initiale
 
 ## LICENCE

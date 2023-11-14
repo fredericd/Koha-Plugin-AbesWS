@@ -5,7 +5,7 @@ use utf8;
 use base qw(Koha::Plugins::Base);
 use CGI qw(-utf8);
 use C4::Context;
-use C4::Biblio;
+use C4::Biblio qw/ ModBiblio /;
 use Koha::Cache;
 use Mojo::UserAgent;
 use Mojo::JSON qw(decode_json encode_json);
@@ -23,12 +23,12 @@ our $metadata = {
     canonicalname   => 'koha-plugin-abesws',
     description     => 'Utilisation de services web Abes',
     author          => 'Tamil s.a.r.l.',
-    date_authored   => '2023-10-29',
-    date_updated    => "2023-10-18",
+    date_authored   => '2023-10-18',
+    date_updated    => "2023-11-14",
     minimum_version => '22.11.00.000',
     maximum_version => undef,
     copyright       => '2023',
-    version         => '1.0.4',
+    version         => '1.0.5',
 };
 
 
@@ -225,6 +225,80 @@ sub get_form_config {
     return $c;
 }
 
+
+sub fix_ppn {
+    my ($self, $ppn_to_bn, $confirm) = @_;
+    warn "confirm: $confirm";
+    my @fixes = split /\r|\n/, $ppn_to_bn;
+    my $result = [];
+    my $ppn = [];
+    for my $fix (@fixes) {
+        $fix =~ s/^ *//;
+        $fix =~ s/ *$//;
+        next if $fix eq '';
+        my @parts = split / |\t/, $fix;
+        next if @parts < 2;
+        my $ppn_wrong = shift @parts;
+        my $ppn_good = shift @parts;
+        say "wrong: $ppn_wrong - good: $ppn_wrong";
+		my $res = { from => $ppn_wrong, to => $ppn_good, bn => \@parts };
+        push @$result, $res;
+        push @$ppn, $ppn_wrong unless @parts;
+    }
+
+    my $ec = C4::Context->config('elasticsearch');
+    my $e = Search::Elasticsearch->new( nodes => $ec->{server} );
+    my $query = {
+        index => $ec->{index_name} . '_biblios',
+        body => {
+            _source => ["koha-auth-number"],
+            size => '10000',
+            query => { terms => { 'koha-auth-number' => $ppn } }
+        }
+    };
+    my $res = $e->search($query);
+    #$logger->warn('retour query ES');
+    my $hits = $res->{hits}->{hits};
+    my $ppn_to_bib;
+    for my $hit (@$hits) {
+        for my $ppn (@{ $hit->{_source}->{'koha-auth-number'} }) {
+            push @{$ppn_to_bib->{$ppn}}, $hit->{_id};
+        }
+    }
+    for my $res (@$result) {
+        my $bn = $res->{bn};
+        next if @$bn;
+        my $ppn_wrong = $res->{from};
+        my $bn_found = $ppn_to_bib->{$ppn_wrong};
+        next unless $bn_found;
+        $res->{bn} = $bn_found;
+    }
+    # Tri des biblionumber
+    $_->{bn} = [ sort { $a <=> $b } @{$_->{bn}} ]
+        for @$result;
+
+    if ($confirm) {
+        for my $res (@$result) {
+            my $bn = $res->{bn};
+            next unless @$bn;
+            my $ppn_wrong = $res->{from};
+            my $ppn_good = $res->{to};
+            for my $biblionumber (@$bn) {
+                my $biblio = Koha::Biblios->find( $biblionumber );
+                my $record = MARC::Moose::Record::new_from($biblio->metadata->record(), 'Legacy');
+                for my $field ($record->field('6..|7..')) {
+                    for (@{$field->subf}) {
+                        $_->[1] = $ppn_good if $_->[0] eq '3' && $_->[1] eq $ppn_wrong;
+                    }
+                }
+                ModBiblio( $record->as('Legacy'), $biblionumber, $biblio->frameworkcode);
+            }
+        }
+    }
+    return $result;
+}
+
+
 sub configure {
     my ($self, $args) = @_;
     my $cgi = $self->{'cgi'};
@@ -318,6 +392,14 @@ sub tool {
             else {
                 $template->param( rcr_select => $c->{iln}->{rcr_array} );
                 $template->param( tdoc_select => $conf->{algo}->{tdoc}->{get_array}->() );
+            }
+        }
+        elsif ($ws eq 'fixppn') {
+            $template = $self->get_template({ file => 'fixppn.tt' });
+            if (my @ppntobn = $cgi->multi_param('ppntobn')) {
+                my $confirm = $cgi->multi_param('confirm');
+                my $ppns = $self->fix_ppn($ppntobn[0], $confirm);
+                $template->param( ppns => $ppns );
             }
         }
     }

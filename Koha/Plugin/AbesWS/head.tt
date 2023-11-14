@@ -24,6 +24,7 @@
       <li><a href="?class=[% CLASS %]&method=tool">Accueil </a></li>
       <li><a href="?class=[% CLASS %]&method=tool&ws=bibliocontrol">bibliocontrol</a></li>
       <li><a href="?class=[% CLASS %]&method=tool&ws=algo">AlgoLiens</a></li>
+      <li><a href="?class=[% CLASS %]&method=tool&ws=fixppn">Fix PPN</a></li>
       <li><a href="?class=[% CLASS %]&method=tool&ws=realign">Réalignement</a></li>
       <li><a href="?class=[% CLASS %]&method=configure">Configuration</a></li>
      </ul>
