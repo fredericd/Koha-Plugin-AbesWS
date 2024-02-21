@@ -357,91 +357,122 @@ function pageDetail() {
 }
 
 
-function opacDetailPublication() {
+function opacDetail() {
+  const { opac } = c.idref;
   $('span.idref-link').each(function(index){
     const ppn = $(this).attr('ppn');
     const html = `
-      <a class="idref-link-click" style="cursor: pointer;" ppn="${ppn}" title="See publications in IdRef">
-        <img src="/plugin/Koha/Plugin/AbesWS/img/idref-short.svg" width="5%">
+      <a class="idref-link-click" style="cursor: pointer;" ppn="${ppn}" title="${opac.text.tab}">
+        ${opac.text.trigger}
       </a>`;
     $(this).html(html);
   });
   $('.idref-link-click').click(function(){
     const ppn = $(this).attr('ppn');
-    const url = `/api/v1/contrib/abesws/biblio/${ppn}`;
-    //console.log(url);
+    const url = `/api/v1/contrib/abesws/idref/${ppn}`;
     jQuery.getJSON(url)
-      .done((publications) => {
+      .done((infos) => {
         let html;
-        if (publications.name === '') {
+        if (infos === '') {
           html = 'Auteur non trouvé dans IdRef';
         } else {
-          const navig = publications.roles.map(role => `<a href="#idref-role-${role.code}" style="font-size: 90%;">${role.label} (${role.docs.length})</a>`);
-          html = `
-            <h2>
-              ${publications.name} / <small>
-              <a href="https://www.idref.fr/${publications.ppn}" target="_blank">${publications.ppn}</a>
-              </small>
-            </h2>`;
-          if (publications.altnames) {
-            html += `
-              <div style="font-size:100%; margin-bottom: 3px;">
-                ${publications.altnames.join(' · ')}
-              </div>`;
-          }
-          if (publications.notes) {
-            html += `
-              <div style="font-size:100%; margin-bottom: 3px;">
-                ${publications.notes.join('<br/>')}
-              </div>`;
-          }
-          html += `<div style="margin-top: 0px; margin-bottom: 5px;";>${navig.join(' • ')}</div>`;
-          publications.roles.forEach((role) => {
-            html += `
-              <h3 id="idref-role-${role.code}">${role.label}</h3>
-              <table class="table table-striped table-hover table-sm"><tbody>`;
-            role.docs.forEach((doc) => {
+          html = '';
+          if (opac.info.enabled && infos.name) {
+            html = `
+              <h2>
+                ${infos.name} / <small>
+                <a href="https://www.idref.fr/${infos.ppn}" target="_blank">${infos.ppn}</a>
+                </small>
+              </h2>`;
+            if (infos.altnames) {
               html += `
-                <tr>
-                  <td>
-                  <a href="https://www.sudoc.fr/${doc.ppn}" target="_blank" rel="noreferrer">
-                  <img title="Publications dans le Sudoc" src="/plugin/Koha/Plugin/AbesWS/img//sudoc.png" />
-                  </a>`;
-              if (doc.bib) {
+                <div style="font-size:100%; margin-bottom: 3px;">
+                  ${infos.altnames.join(' · ')}
+                </div>`;
+            }
+            if (infos.notes) {
+              html += `
+                <div style="font-size:100%; margin-bottom: 3px;">
+                  ${infos.notes.join('<br/>')}
+                </div>`;
+            }
+          }
+          if (opac.toid.enabled && infos?.altid && Object.keys(infos.altid).length > 0) {
+            const { altid } = infos;
+            const ok = opac.toid.source;
+            const sources = Object.keys(altid).filter(source => ok[source]);
+            if (sources.length > 0 ) {
+              html += `
+                <h2 style="margin-top: 15px;">Identifiants externes</h2>
+                <ul>`;
+              sources.forEach((source) => {
+                const id = altid[source];
+                const url =
+                  source == 'GEOVISTORY' ? `https://www.geovistory.org/page/${id}` :
+                  source == 'HAL'        ? `https://cv.hal.science/${id}` :
+                  source == 'ISNI'       ? `http://isni.org/isni/${id}` :
+                  source == 'ORCID'      ? `https://orcid.org/${id}` :
+                  source == 'PRELIB'     ? `https://mshb.huma-num.fr/prelib/${id}` :
+                  source == 'RNSR'       ? `https://appliweb.dgri.education.fr/rnsr/PresenteStruct.jsp?numNatStruct=${id}&PUBLIC=OK` :
+                  source == 'WIKIDATA'   ? `https://www.wikidata.org/wiki/${id}` :
+                    id;
+                html += `<li>${source}: <a href="${url}" target="_blank">${id}</a></li>`;
+              });
+              html += '</ul>\n';
+            }
+          }
+          if (opac.publication.enabled) {
+            const navig = infos.roles.map(role => `<a href="#idref-role-${role.code}" style="font-size: 90%;">${role.label} (${role.docs.length})</a>`);
+            html += `
+              <h2>Publications</h2>
+              <div style="margin-top: 0px; margin-bottom: 5px;";>${navig.join(' • ')}</div>`;
+            infos.roles.forEach((role) => {
+              html += `
+                <h3 id="idref-role-${role.code}">${role.label}</h3>
+                <table class="table table-striped table-hover table-sm"><tbody>`;
+              role.docs.forEach((doc) => {
                 html += `
-                  <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=${doc.bib}" target="_blank">
-                  <img title="Publications dans la catalogue local" src="/opac-tmpl/bootstrap/images/favicon.ico" />
-                  </a>`;
-              }
-              html += `</td><td>${doc.citation}</td></tr>`;
+                  <tr>
+                    <td>
+                    <a href="https://www.sudoc.fr/${doc.ppn}" target="_blank" rel="noreferrer">
+                    <img title="Publications dans le Sudoc" src="/plugin/Koha/Plugin/AbesWS/img//sudoc.png" />
+                    </a>`;
+                if (doc.bib) {
+                  html += `
+                    <a href="/cgi-bin/koha/opac-detail.pl?biblionumber=${doc.bib}" target="_blank">
+                    <img title="Publications dans la catalogue local" src="/opac-tmpl/bootstrap/images/favicon.ico" />
+                    </a>`;
+                }
+                html += `</td><td>${doc.citation}</td></tr>`;
+              });
+              html += '</tbody></table>';
             });
-            html += '</tbody></table>';
-          });
-          html += '</div>';
+            html += '</div>';
+          }
         }
-        const idrefDiv = $('#idref-publications');
+        const idrefDiv = $('#idref-infos');
         if (idrefDiv.length) {
           idrefDiv.html(html);
         } else {
-          html = `<div id="idref-publications">${html}</div>`;
+          html = `<div id="idref-infos">${html}</div>`;
           $('.nav-tabs').append(`
             <li id="tab_idref" class="nav-item" role="presentation">
-             <a href="#idref-publications" class="nav-link" id="tab_idref-tab"
+             <a href="#idref-infos" class="nav-link" id="tab_idref-tab"
                 data-toggle="tab" role="tab" aria-controls="tab_idref" aria-selected="false"
              >
-               <img src="/plugin/Koha/Plugin/AbesWS/img/idref.svg" style="height: 20px;"/>
+               ${opac.text.tab}
              </a>
             </li>
           `);
           $('#bibliodescriptions .tab-content').append(`
-            <div id="idref-publications" class="tab-pane" role="tabpanel" aria-labelledby="tab_idref-tab">
+            <div id="idref-infos" class="tab-pane" role="tabpanel" aria-labelledby="tab_idref-tab">
               ${html}
             <div>
           `);
         }
-        $('a[href="#idref-publications"]').click();
+        $('a[href="#idref-infos"]').click();
         $([document.documentElement, document.body]).animate({
-          scrollTop: $("#idref-publications").offset().top
+          scrollTop: $("#idref-infos").offset().top
         }, 2000);
       });
     });
@@ -454,8 +485,9 @@ function run(conf) {
     pageCatalog();
   } else if (c?.detail?.enabled && $('body').is("#catalog_detail")) {
     pageDetail();
-  } else if (c?.idref?.opac?.publication?.enabled && $('body').is('#opac-detail')) {
-    opacDetailPublication();
+  }
+  if ($('body').is('#opac-detail') && c?.idref?.opac?.enabled)  {
+    opacDetail();
   }
 }
 

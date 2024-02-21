@@ -1,7 +1,7 @@
 # Plugin AbesWS
 
 **AbesWS** est un plugin Koha qui permet d'exploiter depuis Koha des services
-web de l'ABES. L'intégration à Koha de services web de l'ABES vise deux
+web de l'Abes. L'intégration à Koha de services web de l'Abes vise deux
 objectifs distincts et complémentaires :
 
 - **Enrichissement de l'affichage** — L'affichage des notices dans Koha est
@@ -45,10 +45,10 @@ Plusieurs sections pilotent le fonctionnement du plugin :
 - **Accès aux WS** — Paramètres d'accès aux services web. Il n'est pas
   nécessaire de modifier les paramètres par défaut. Précisions pour IdRef:
   - **URL IdRef** — L'URL du point d'accès à IdRef. Par défaut
-    `https://www.idref.fr`. En phase de test, on peut obtenir de l'ABES une
+    `https://www.idref.fr`. En phase de test, on peut obtenir de l'Abes une
     autre URL.
   - **ID Client** — Identifiant de l'établissement utilisant les services web
-    de l'ABES. Cet identifiant permet à l'ABES de tenir à jour des statistiques
+    de l'Abes. Cet identifiant permet à l'Abes de tenir à jour des statistiques
     d'usage de ses services par établissement.
 
 - **Établissement** — L'ILN et les RCR de l'ILN. Les services web
@@ -58,12 +58,12 @@ Plusieurs sections pilotent le fonctionnement du plugin :
 
   ```text
   341722102 BIU Montpellier - Droit, Science po, Eco et Gestion
-  341725201 ABES - Centre de doc
+  341725201 Abes - Centre de doc
   ```
 
   permettra d'interroger les infos relatives à deux RCR, le RCR 341722102
   correspond à la _BIU Montpellier - Droit, Science po, Eco et Gestion_ et le
-  RCR 341725201 pour _ABES - Centre de doc_.
+  RCR 341725201 pour _Abes - Centre de doc_.
 
   Notez qu'on peut utiliser le plugin sans être déployé dans le Sudoc.
   Certaines fonctionnalités de controle ne seront pas opérantes : bibliocontrol
@@ -81,7 +81,7 @@ Plusieurs sections pilotent le fonctionnement du plugin :
 
 - **PRO Page détail** — Dans la page détail d'une notice bibliographique
   affichée dans l'interface PRO de Koha, on peut récupérer et afficher des
-  informations complémentaires obtenues au moyen des services web de l'ABES.
+  informations complémentaires obtenues au moyen des services web de l'Abes.
   Pour le moment, on dispose des options suivantes :
 
   - **Activer** — pour activer l'affichage d'infos provenant du Sudoc sur la
@@ -105,15 +105,13 @@ Plusieurs sections pilotent le fonctionnement du plugin :
     Le lien aux zones 7xx est pleinement fonctionnel. Pour les zones Rameau
     (6xx), ce n'est pas encore totalement le cas.
 
-- **IdRef OPAC Publications** — Permet d'activer l'affichage sur la page de
-  détail de l'OPAC d'infos sur les publications des auteurs et collectivités.
-  - **Expiration en secondes** — Les infos récupérées sur le serveur de l'Abes
-	sont mises en cache localement sur le serveur Koha pour une durée
-    paramétrable.
+- **IdRef OPAC Détail** — Permet d'activer l'affichage sur la page de
+  détail de l'OPAC d'infos supplémentaires sur les auteurs et les
+  collectivités.
 
 ### Bibliocontrol
 
-La page **bibliocontrol** lance l'appel au service web bibliocontrol de l'ABES,
+La page **bibliocontrol** lance l'appel au service web bibliocontrol de l'Abes,
 puis affiche le résultat dans un tableau. On choisit au préalable le RCR dont on
 veut contrôler les notices. Le tableau contient deux colonnes permettant
 d'identifier les notices : PPN et Titre.
@@ -129,7 +127,7 @@ la modifier.
 
 ### AlgoLiens
 
-**AlgoLiens** est un service web de l'ABES qui, pour un ou plusieurs RCR,
+**AlgoLiens** est un service web de l'Abes qui, pour un ou plusieurs RCR,
 identifie les notices présentant des zones pour lesquelles il manque les
 sous-zones de liens. C'est par exemple une zone comme celle-ci :
 
@@ -168,29 +166,26 @@ contenir quelque chose qui ressemble à ceci :
 ```
 
 **Localisation** — Si on a activé l'affichage des localisations Sudoc, le
-service web _multiwhere_ de l'ABES est appelé pour chaque notice qui dispose
+service web _multiwhere_ de l'Abes est appelé pour chaque notice qui dispose
 d'un PPN. Les localisations de la notice dans les établissements Sudoc sont
 affichées sont affichées dans l'onglet _AbesWS_. Chaque établissement est un
 lien vers la page Sudoc du RCR : nom de établissement, adresse, téléphone, etc.
 
 **QualiMarc** — En activant l'option [QualiMarc](https://qualimarc.sudoc.fr),
-l'API de l'outil d'analyse de l'ABES est appelé avec le PPN de la notice
+l'API de l'outil d'analyse de l'Abes est appelé avec le PPN de la notice
 courante. Le résultat de cette analyse est placé dans l'onglet _AbesWS_.
 
-### OPAC Publications IdRef
+### IdRef OPAC Détail
 
-En activant l'affichage des publications IdRef, la page de détail de l'OPAC est
-enrichie d'informations récupérées via le service web
-[biblio](https://documentation.abes.fr/aideidrefdeveloppeur/index.html#MicroWebBiblio)
-de l'ABES. Ces informations sont mises en cache sur le serveur Koha afin
-d'éviter de saturer de requêtes le serveur de l'ABES. La durée de la mise en
+En activant l'affichage IdRef à l'OPAC, la page de détail de l'OPAC est
+enrichie d'informations récupérées via plusieurs services web de l'Abes en lien
+avec IdRef.  Ces informations sont mises en cache sur le serveur Koha afin
+d'éviter de saturer de requêtes le serveur de l'Abes. La durée de la mise en
 cache est paramétrable (1 journée par défaut).
 
-Les publications retrouvées via _biblio_ sont affichées regroupées par fonction
-de l'auteur relativement à la publication. Chaque publication présente un lien
-pour afficher la notice dans le Sudoc, ainsi qu'un lien vers la notice locale
-si elle existe dans le Catalogue Koha. L'identification des notices Koha se fait
-sur un index Elasticsearch **ppn**.
+le service web
+[biblio](https://documentation.abes.fr/aideidrefdeveloppeur/index.html#MicroWebBiblio)
+de l'Abes.
 
 La feuille de style de la page de détail doit insérer une balise
 contenant les PPN des auteurs/collectivités. Le plugin utilisera ces PPN pour
@@ -214,60 +209,82 @@ dans les templates des zones 7xx :
 </xsl:if>
 ```
 
+Trois catégories d'informations sont affichables :
+
+- **Infos complémentaires sur l'auteur** — On peut activer la récupération
+  d'informations supplémentaires sur l'auteur/collectivité. Ce sont les formes
+  du nom alternatives ou traduites, des notices sur l'auteurs.
+
+- **Identifiants externes** — L'Abes procède régulièrement à des opérations
+  d'alignement des identifiants IdRef (PPN) avec d'autres référentiels. Le
+  résultat de ces alignements est rendu disponible via le service web
+  [idref2id](https://documentation.abes.fr/aideidrefdeveloppeur/index.html#MicroWebIdref2id).
+  Le plugin peut afficher à l'OPAC tout ou partie de ces identifiants externes.
+
+- **Publications** — Les publications de l'auteur/collectivité sont
+  retrouvées au moyen du service web
+  [biblio](https://documentation.abes.fr/aideidrefdeveloppeur/index.html#MicroWebBiblio).
+  Les publications sont affichées regroupées par fonction de l'auteur
+  relativement à la publication. Chaque publication présente un lien pour
+  afficher la notice dans le Sudoc, ainsi qu'un lien vers la notice locale si
+  elle existe dans le Catalogue Koha.  L'identification des notices Koha se
+  fait sur un index Elasticsearch **ppn**.
+
 **Service web** — Le plugin utilise et expose un service web qui peut se
-comprendre comme une extension du service web _biblio_ de l'ABES. Pour chaque
-notice, il retourne les informations de _biblio_, plus le _biblionumber_ de la
-notice Koha. Point d'entrée du service web du plugin pour, par exemple, le PPN
+comprendre comme une extension des services de l'Abes liés à IdRef.  Pour
+chaque auteur identifié par son PPN, il retourne les trois catégories
+d'informations décrites ci-dessus.
+
+Point d'entrée du service web du plugin pour, par exemple, le PPN
 259238678 :
 
 ```
-/api/v1/contrib/abesws/biblio/259238678
+/api/v1/contrib/abesws/idref/259238678
 ```
 
 qui renvoie :
 
 ```json
 {
-  "ppn": "259238678",
-  "name": "Bigé, Emma (1987-....)",
+  "ppn": "027715078",
+  "name": "Bourdieu, Pierre, 1930-2002",
+  "altnames": null,
+  "notes": [
+    "Sociologue. - Professeur titulaire de la chaire Sociologie, au Collège de France, 1982-2001. - Directeur du Centre de Sociologie Européenne (CSE) du Collège de France et de l'Ecole des Hautes Etudes en Sciences Sociales, 1985-1998. - Directeur de la Collection \"Liber\" (Editions du Seuil), 1998-2002",
+    "Titulaire de la chaire de Sociologie au Collège de France (1981-2001)",
+    "Fondateur en 1975 de la revue \"Actes de la recherche en sciences sociales\""
+  ],
+  "altid": {
+    "BNF": "http://catalogue.bnf.fr/ark:/12148/cb118934022",
+    "ISNI": "0000000121385892",
+    "VIAF": "http://viaf.org/viaf/71387829",
+    "WIKIDATA": "Q156268",
+    "WIKIPEDIA": "https://fr.wikipedia.org/wiki/Pierre_Bourdieu"
+  },
   "roles": [
     {
       "code": "070",
-      "label": "Auteur",
       "docs": [
         {
-          "ppn": "268922578",
-          "bib": "19701",
-          "citation": "Mouvementements  : écopolitiques de la danse  / Emma Bigé / Paris : la Découverte , DL 2023"
+          "ppn": "078457548",
+          "biblionumber": 101,
+          "citation": "\"Si le monde social m'est supportable, c'est parce que je peux m'indigner\"  / Pierre Bourdieu  ; entretien mené par Antoine Spire  ; assisté de Pascale Casanova et de Miguel Benassayag (1989-1990)  ; préface d'Antoine Spire / La Tour-d'Aigues : Éditions de l'Aube , DL 2004"
         },
         {
-          "ppn": "270354271",
-          "citation": "Mouvementements  : Écopolitiques de la danse  / Emma Bigé / Paris : La Découverte"
-        }
-      ],
-    },
-    {
-      "code": "651",
-      "label": "Directeur de publication",
-      "docs": [
-        {
-          "citation": "La perspective de la pomme  : histoire, politiques et pratiques du Contact Improvisation  / sous la direction de Emma Bigé, Francesca Falcone, Alice Godfroy, Alessandra Sini / Bologna : Piretti Editore",
-          "ppn": "26208158X"
-        }
-      ]
-    }
-  ]
-}
+          "citation": "100 penseurs de la société  / Julien Damon / Paris : PUF , DL 2016",
+          "ppn": "195570731"
+        },
 ```
 
 ## VERSIONS
 
+* **1.0.6** / février 2024 — Ajout infos provenant du webservice idref2id
 * **1.0.5** / novembre 2023 — Fonctionnalité pour corriger les PPN IdRef
 * **1.0.3** / octobre 2023 - Version initiale
 
 ## LICENCE
 
-This software is copyright (c) 2023 by Tamil s.a.r.l.
+This software is copyright (c) 2024 by Tamil s.a.r.l.
 
 This is free software; you can redistribute it and/or modify it under the same
 terms as the Perl 5 programming language system itself.

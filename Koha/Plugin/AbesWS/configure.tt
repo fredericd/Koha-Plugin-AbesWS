@@ -148,7 +148,7 @@
  </fieldset>
 
  <fieldset class="rows">
-  <legend>PRO Catalogage</legend>
+  <legend>IdRef PRO Catalogage</legend>
   <ol>
    <li>
     <label for="idref.catalog.enabled">Activer: </label>
@@ -167,15 +167,16 @@
  </fieldset>
 
  <fieldset class="rows">
-  <legend>OPAC Page detail</legend>
+  <legend>IdRef OPAC Page detail</legend>
   <ol>
    <li>
-    <label for="idref.opac.publication.enabled">Activer: </label>
-    <input id="idref.opac.publication.enabled" type="checkbox" name="idref.opac.publication.enabled" size="15" value="1" [% IF c.idref.opac.publication.enabled == 1 %]checked[% END %] />
-    Affichage à l'OPAC des infos provenant du service web <a href="https://documentation.abes.fr/aideidrefdeveloppeur/index.html#MicroWebBiblio">Biblio</a>
-    de IdRef.
-   </li>
-
+    <label for="idref.opac.enabled">Activer: </label>
+    <input
+      id="idref.opac.enabled" name="idref.opac.enabled"
+      type="checkbox"  size="15" value="1"
+      [% IF c.idref.opac.enabled == 1 %]checked[% END %]
+    />
+    Affichage à l'OPAC d'infos relatives aux auteurs retrouvées dans le référentiel IdRef.
    <p>
      Votre feuille de style de la page de détail de l'OPAC doit être modifiée
      pour afficher une balise span contenant le PPN de l'auteur dont on affiche
@@ -191,12 +192,82 @@
     </xsl:attribute>
   </span>
 </xsl:if></xmp>
-   <li>
-    <label for="idref.opac.publication.expiry">Expiration en secondes:</label>
-    <input id="idref.opac.publication.expiry" type="text" name="idref.opac.publication.expiry" size="50" value="[% c.idref.opac.publication.expiry %]" />
    </li>
+
+   <li>
+    <label for="idref.opac.expiry">Expiration en secondes:</label>
+    <input id="idref.opac.expiry" type="text" name="idref.opac.expiry" size="50" value="[% c.idref.opac.expiry %]" />
+   </li>
+
+   <li>
+    <label for="idref.opac.text.trigger">Texte d'appel:</label>
+    <input
+      id="idref.opac.text.trigger" name="idref.opac.text.trigger"
+      type="text" size="50" value="[% c.idref.opac.text.trigger %]" />
+   </li>
+   <li>
+    <label for="idref.opac.text.tab">Texte onglet:</label>
+    <input
+      id="idref.opac.text.tab" name="idref.opac.text.tab"
+      type="text" size="50" value="[% c.idref.opac.text.tab %]" />
+   </li>
+
+   <li>
+    <label for="idref.opac.info.enabled">Activer: </label>
+    <input
+      id="idref.opac.info.enabled" name="idref.opac.info.enabled"
+      type="checkbox" size="15" value="1" 
+      [% IF c.idref.opac.info.enabled == 1 %]checked[% END %]
+    />
+    Affichage d'infos complémentaires sur l'auteur : autres noms, notes, etc.
+   </li>
+
+   <li>
+    <label for="idref.opac.publication.enabled">Activer: </label>
+    <input
+      id="idref.opac.publication.enabled" name="idref.opac.publication.enabled"
+      type="checkbox" size="15" value="1" 
+      [% IF c.idref.opac.publication.enabled == 1 %]checked[% END %]
+    />
+    Affichage des publications de l'auteur provenant du service web <a
+    href="https://documentation.abes.fr/aideidrefdeveloppeur/index.html#MicroWebBiblio">Biblio</a>
+    de IdRef.
+    <br/>
+    <input
+      id="idref.opac.publication.elasticsearch" name="idref.opac.publication.elasticsearch"
+      type="checkbox" size="15" value="1" 
+      [% IF c.idref.opac.publication.elasticsearch == 1 %]checked[% END %]
+    />
+    Retrouver les publications dans le catalogue local Koha avec Elasticsearch.
+    Un index <code>ppn</code> est nécessaire.  </li>
+   </li>
+
+   <li>
+    <label for="idref.opac.toid.enabled">Activer: </label>
+    <input
+      id="idref.opac.toid.enabled" name="idref.opac.toid.enabled"
+      type="checkbox" size="15" value="1"
+      [% IF c.idref.opac.toid.enabled == 1 %]checked[% END %]
+    />
+    Affichage des identifiants alignés par l'ABES, en utilisant le
+    service web <a
+    href="https://documentation.abes.fr/aideidrefdeveloppeur/index.html#MicroWebIdref2id">idref2id</a>.
+    </li>
+   <li>
+    <label for="idref.opac.toid.source">Sources:</label>
+    [% FOREACH source IN c.idref.opac.toid.source %]
+      <input
+        id="idref.opac.toid.source.[% source.key %]" type="checkbox"
+        name="idref.opac.toid.source.[% source.key %]" size="15" value="1"
+        [% IF source.value == 1 %]checked[% END %]
+      />
+      [% source.key %]
+    [% END %]
+   </li>
+
   </ol>
  </fieldset>
+
 
  <fieldset class="action">
   <input type="hidden" name="save" value="1" />

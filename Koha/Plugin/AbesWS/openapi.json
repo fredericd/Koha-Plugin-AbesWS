@@ -1,5 +1,5 @@
 {
-  "/biblio/{ppn}": {
+  "/idref/{ppn}": {
     "get": {
       "x-mojo-to": "AbesWS::Controller#get",
       "operationId": "getAbesBiblioService",

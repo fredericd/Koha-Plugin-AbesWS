@@ -24,11 +24,11 @@ our $metadata = {
     description     => 'Utilisation de services web Abes',
     author          => 'Tamil s.a.r.l.',
     date_authored   => '2023-10-18',
-    date_updated    => "2023-11-14",
+    date_updated    => "2024-02-21",
     minimum_version => '22.11.00.000',
     maximum_version => undef,
-    copyright       => '2023',
-    version         => '1.0.5',
+    copyright       => '2024',
+    version         => '1.0.6',
 };
 
 
@@ -138,7 +138,10 @@ sub config {
     my @fields = split /\r|\n/, $c->{idref}->{catalog}->{fields};
     @fields = grep { $_ } @fields;
     $c->{idref}->{catalog}->{fields_array} = \@fields;
-    $c->{idef}->{opac}->{publication}->{expiry} ||= 86400;
+
+    $c->{idref}->{opac}->{expiry} ||= 86400;
+    $c->{idref}->{opac}->{text}->{trigger} ||= '➕';
+    $c->{idref}->{opac}->{text}->{tab} ||= "➕ d'infos";
 
     $c->{metadata} = $self->{metadata};
 
@@ -197,9 +200,33 @@ sub get_form_config {
 				fields => 0,
 	        },
             opac => {
+                enabled => 0,
+                expiry => undef,
+                text => {
+                    trigger => undef,
+                    tab => undef,
+                },
+                info => {
+                    enabled => 0,
+                },
                 publication => {
                     enabled => 0,
-                    expiry => undef,
+                    elasticsearch => 0,
+                },
+                toid => {
+                    enabled => 0,
+                    source => {
+                        BNF => 0,
+                        DHS => 0,
+                        GEOVISTORY => 0,
+                        HAL => 0,
+                        ISNI => 0,
+                        PRELIB => 0,
+                        RNSR => 0,
+                        VIAF => 0,
+                        WIKIDATA => 0,
+                        WIKIPEDIA => 0,
+                    },
                 },
             },
         },
@@ -312,6 +339,7 @@ sub configure {
         #FIXME: qu'est-ce ?
         map { s/'/''/g }
         split /\n/, $c->{idref}->{catalog}->{fields};
+
         $self->store_data({ c => encode_json($c) });
         print $self->{'cgi'}->redirect(
             "/cgi-bin/koha/plugins/run.pl?class=Koha::Plugin::AbesWS&method=tool");
@@ -772,7 +800,9 @@ sub marc_record_to_document {
 sub intranet_js {
     my $self = shift;
     my $js_file = $self->get_plugin_http_path() . "/abesws.js";
-    my $c = encode_json($self->config());
+    my $c = $self->config();
+    $c = encode_json($c);
+    utf8::decode($c);
     return <<EOS;
 <script>
 \$(document).ready(() => {
@@ -815,6 +845,7 @@ sub install() {
             INDEX (type)
         )
     });
+    return 1;
 }
 
 sub upgrade {
@@ -828,6 +859,7 @@ sub upgrade {
 
 sub uninstall() {
     my ($self, $args) = @_;
+    return 1;
 }
 
 1;
