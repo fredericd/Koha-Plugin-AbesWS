@@ -23,7 +23,7 @@ points suivants :
 
 **📁 TÉLÉCHARGEMENT** — Récupérez sur le site [Tamil](https://www.tamil.fr)
 l'archive de l'Extension
-**[AbesWS](https://www.tamil.fr/download/koha-plugin-abesws-1.0.6.kpz)**.
+**[AbesWS](https://www.tamil.fr/download/koha-plugin-abesws-1.0.7.kpz)**.
 
 Dans l'interface PRO de Koha, allez dans `Outils > Outils de Plugins`. Cliquez
 sur Télécharger un plugin. Choisissez l'archive **téléchargée** à l'étape
@@ -278,6 +278,7 @@ qui renvoie :
 
 ## VERSIONS
 
+* **1.0.7** / juillet 2024 — Amélioration réalignement + réf ORCID
 * **1.0.6** / février 2024 — Ajout infos provenant du webservice idref2id
 * **1.0.5** / novembre 2023 — Fonctionnalité pour corriger les PPN IdRef
 * **1.0.3** / octobre 2023 - Version initiale

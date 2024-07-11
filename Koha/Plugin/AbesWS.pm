@@ -24,11 +24,11 @@ our $metadata = {
     description     => 'Utilisation de services web Abes',
     author          => 'Tamil s.a.r.l.',
     date_authored   => '2023-10-18',
-    date_updated    => "2024-02-21",
+    date_updated    => "2024-07-11",
     minimum_version => '22.11.00.000',
     maximum_version => undef,
     copyright       => '2024',
-    version         => '1.0.6',
+    version         => '1.0.7',
 };
 
 
@@ -221,8 +221,10 @@ sub get_form_config {
                         GEOVISTORY => 0,
                         HAL => 0,
                         ISNI => 0,
+                        ORCID => 0,
                         PRELIB => 0,
                         RNSR => 0,
+                        ROR => 0,
                         VIAF => 0,
                         WIKIDATA => 0,
                         WIKIPEDIA => 0,
@@ -618,7 +620,7 @@ sub realign {
             my $ppn = $field->subfield('3');
             next unless $ppn;
             my $xml = $cache->get_from_cache($ppn);
-            #say "PPN $ppn" if $xml;
+            #say "Trouvé dans le cache" if $xml;
             my ($url, $res, $action, $new_ppn);
             unless ($xml) {
                 $url = "https://www.idref.fr/$ppn.xml";
@@ -637,7 +639,7 @@ sub realign {
                 next if !$xml && $res->headers->content_type !~ /xml/;
                 unless ($xml) {
                     $xml = $res->body;
-                    $cache->set_in_cache($ppn, $xml, { expiry => 5184000 });
+                    $cache->set_in_cache($ppn, $xml, { expiry => 1296000 }); # 6 heures
                 }
                 my $auth = MARC::Moose::Record::new_from($xml, 'marcxml');
                 next unless $xml;
@@ -676,7 +678,7 @@ sub realign {
                     exit;
                 }
                 my $heading_match = join(' ',
-                    map { $_->[1] } grep { $_->[0] =~ /[abcdfg]/ }  @{$heading->subf} );
+                    map { $_->[1] } grep { $_->[0] =~ /[abcdefghp]/ }  @{$heading->subf} );
                 if ($field_match ne $heading_match) {
                     #say $field->as_formatted;
                     #say $heading->as_formatted;
@@ -685,9 +687,9 @@ sub realign {
                         ppn => $new_ppn || $ppn,
                         avant => $field->as_formatted,
                     };
-                    my @subf = grep { $_->[0] !~ /[abcdfg]/ } @{$field->subf};
+                    my @subf = grep { $_->[0] !~ /[abcdefghp]/ } @{$field->subf};
                     for (@{$heading->subf}) {
-                        next if $_->[0] !~ /[abcdfg]/;
+                        next if $_->[0] !~ /[abcdefghp]/;
                         push @subf, $_;
                     }
                     $field->subf( \@subf );
@@ -703,7 +705,6 @@ sub realign {
                 };
                 $field->subf( [ grep { $_->[0] !~ '3' } @{$field->subf} ] );
                 $action->{apres} = $field->as_formatted;
-                $modified = 1;
             }
             if ($action) {
                 push @{$actions->{$biblionumber}}, $action;
