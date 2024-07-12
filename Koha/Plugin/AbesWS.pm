@@ -579,7 +579,8 @@ sub realign {
     }
     say "from: $from - to: $to" if $verbose;
 
-    my $start = DateTime->now;
+    my $tz = DateTime::TimeZone->new( name => 'local' );
+    my $start = DateTime->now( time_zone => $tz );
 
     my $plugin = Koha::Plugin::AbesWS->new({
         enable_plugins => 1,
@@ -722,7 +723,7 @@ sub realign {
     C4::Context->dbh->do(qq{
         INSERT INTO $table_name (type, result, start, end)
         VALUES (?, ?, ?, ?)
-    }, undef, 'realign', to_json($actions), $start, DateTime->now );
+    }, undef, 'realign', to_json($actions), $start, DateTime->now( time_zone => $tz ) );
 }
 
 
