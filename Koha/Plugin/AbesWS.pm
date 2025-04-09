@@ -24,11 +24,11 @@ our $metadata = {
     description     => 'Utilisation de services web Abes',
     author          => 'Tamil s.a.r.l.',
     date_authored   => '2023-10-18',
-    date_updated    => "2024-07-11",
+    date_updated    => "2025-04-09",
     minimum_version => '22.11.00.000',
     maximum_version => undef,
-    copyright       => '2024',
-    version         => '1.0.7',
+    copyright       => '2025',
+    version         => '1.0.8',
 };
 
 
