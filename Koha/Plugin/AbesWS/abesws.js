@@ -229,10 +229,10 @@ function onClick(e, div) {
 
 function pageCatalog() {
   // On charge les éléments externes
-  $('head').append('<link rel="stylesheet" type="text/css" href="/plugin/Koha/Plugin/AbesWS/subModal.css">');
+  $('head').append('<link rel="stylesheet" type="text/css" href="/api/v1/contrib/abesws/static/subModal.css">');
   //console.log(c.idref.url);
   window.gDefaultPage = c.idref.url;
-  $.getScript("/plugin/Koha/Plugin/AbesWS/subModal.js")
+  $.getScript("/api/v1/contrib/abesws/static/subModal.js")
    .done(() => {
    });
   c.idref.catalog.fields_array.forEach(function(tag) {
@@ -244,7 +244,7 @@ function pageCatalog() {
         //console.log(i);
         const div = $(divs.get(i));
         //console.log(div);
-        const button = $("<a href='#' class='popupIdRef'><img src='/plugin/Koha/Plugin/AbesWS/img/idref-short.svg' style='max-height: 24px;'/></a>");
+        const button = $("<a href='#' class='popupIdRef'><img src='/api/v1/contrib/abesws/static/img/idref-short.svg' style='max-height: 24px;'/></a>");
         div.append(button);
         button.click((e) => onClick(e, div));
       })();
@@ -435,7 +435,7 @@ function opacDetail() {
                   <tr>
                     <td>
                     <a href="https://www.sudoc.fr/${doc.ppn}" target="_blank" rel="noreferrer">
-                    <img title="Publications dans le Sudoc" src="/plugin/Koha/Plugin/AbesWS/img//sudoc.png" />
+                    <img title="Publications dans le Sudoc" src="/api/v1/contrib/abesws/static/img/sudoc.png" />
                     </a>`;
                 if (doc.bib) {
                   html += `

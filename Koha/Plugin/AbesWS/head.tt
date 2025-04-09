@@ -18,7 +18,7 @@
    <div id="navmenu">
     <ul>
      <a href="http://documentation.abes.fr/sudoc/manuels/administration/aidewebservices/index.html" alt="Services Web de l'Abes">
-      <img src="[% PLUGIN_PATH %]/img/logo-abes.svg"/>
+      <img src="/api/v1/contrib/abesws/static/img/logo-abes.svg"/>
      </a>
      <ul>
       <li><a href="?class=[% CLASS %]&method=tool">Accueil </a></li>
