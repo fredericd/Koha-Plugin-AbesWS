@@ -800,7 +800,7 @@ sub marc_record_to_document {
 
 sub intranet_js {
     my $self = shift;
-    my $js_file = $self->get_plugin_http_path() . "/abesws.js";
+    my $js_file = '/api/v1/contrib/abesws/static/abesws.js';
     my $c = $self->config();
     $c = encode_json($c);
     utf8::decode($c);
@@ -861,6 +861,51 @@ sub upgrade {
 sub uninstall() {
     my ($self, $args) = @_;
     return 1;
+}
+
+sub static_routes {
+    my ( $self, $args ) = @_;
+
+    my @filenames = qw(
+        img/idref-short.svg
+        img/idref.svg
+        img/koha-cata-idref.png
+        img/logo-abes.svg
+        img/logo-idref.svg
+        img/sudoc.png
+        img/tamil-logo-small.png
+        abesws.js
+        fermer.gif
+        subModal.css
+        subModal.js
+    );
+
+    my $spec = {};
+    foreach my $filename (@filenames) {
+        $spec->{"/$filename"} = {
+            get => {
+                'x-mojo-to' => 'Static#get',
+                responses => {
+                    200 => {
+                        description => 'File found',
+                        schema => {
+                            type => 'file',
+                        },
+                    },
+                },
+                parameters => [
+                    # This parameter is appended by jQuery to disable browser cache
+                    {
+                        name => '_',
+                        in => 'query',
+                        type => 'string',
+                    },
+                ],
+            },
+        };
+    }
+
+    return $spec;
 }
 
 1;
