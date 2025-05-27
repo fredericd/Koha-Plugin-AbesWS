@@ -47,9 +47,11 @@
 </ul>
 
 <form method="post">
+ [% INCLUDE 'csrf-token.inc' %]
  <input type="hidden" name="class" value="[% CLASS %]"/>
  <input type="hidden" name="method" value="[% METHOD %]"/>
  <input type="hidden" name="ws" value="fixppn"/>
+ <input type="hidden" name="op" value="cud-save"/>
 
  <p>Listes de modifications à effectuer :</p>
  <pre><textarea id="ppntobn" name="ppntobn" rows="20" cols="120">[% ppntob %]</textarea></pre>

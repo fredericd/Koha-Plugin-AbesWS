@@ -3,10 +3,12 @@
 
 <h1>Bibliocontrol</h1>
 [% IF rcr_select %]
- <form method="get">
+ <form method="post">
+  [% INCLUDE 'csrf-token.inc' %]
   <input type="hidden" name="class" value="[% CLASS %]"/>
   <input type="hidden" name="method" value="[% METHOD %]"/>
   <input type="hidden" name="ws" value="bibliocontrol"/>
+  <input type="hidden" name="op" value="cud-save"/>
 
   <p>Sélectionner le RCR à contrôler</p>
   <select name="rcr" id="rcr-select">

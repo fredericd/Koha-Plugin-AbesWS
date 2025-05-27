@@ -24,11 +24,11 @@ our $metadata = {
     description     => 'Utilisation de services web Abes',
     author          => 'Tamil s.a.r.l.',
     date_authored   => '2023-10-18',
-    date_updated    => "2025-04-09",
-    minimum_version => '22.11.00.000',
+    date_updated    => "2025-05-23",
+    minimum_version => '24.11.00.000',
     maximum_version => undef,
     copyright       => '2025',
-    version         => '1.0.8',
+    version         => '1.1.0',
 };
 
 
@@ -154,6 +154,8 @@ sub config {
 
     my %bib_per_rcr = map { $_->[0] => $_->[1] } @rcr;
     $c->{iln}->{rcr_hash} = \%bib_per_rcr;
+
+    $c->{marcflavour} = C4::Context->preference("marcflavour");
 
     $self->{args}->{c} = $c;
 
@@ -331,8 +333,9 @@ sub fix_ppn {
 sub configure {
     my ($self, $args) = @_;
     my $cgi = $self->{'cgi'};
+    my $op  = $cgi->param('op') // q{};
 
-    if ( $cgi->param('save') ) {
+    if ( $op eq 'cud-save' ) {
         my $c = get_form_config($cgi);
         my $rcr = [
             map { s/'/''/g }

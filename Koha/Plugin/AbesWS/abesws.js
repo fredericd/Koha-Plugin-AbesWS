@@ -147,6 +147,13 @@ function traiteResultat(e) {
   current.set('3', ppn);
 
   const field = parseMarcHeading(data.f);
+  if (c.marcflavour === 'MARC21') {
+    // Regroupement nom/prénom
+    if (field.b && field.b.length > 0) {
+      field.a = field.a + ', ' + field.b;
+      delete field.b;
+    }
+  }
   ['a','b','c','d','e','f','g','h','p'].forEach((letter) => {
     const value = field[letter] || '';
     if (value) current.set(letter, value);
@@ -161,6 +168,8 @@ function onClick(e, div) {
   current.tag = tag;
   current.id = idtop.substr(22);
 
+  $('#toolbar.sticky').css('position', 'relative');
+  $('#toolbar.sticky').css('z-index', '-1');
   let index = 'Nom de personne';
   if (tag == '601' || tag == '710' || tag == '711' || tag == '712' ) index = 'Nom de collectivité';
   if (tag == '602') index = 'Famille';

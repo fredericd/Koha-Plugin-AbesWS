@@ -2,10 +2,12 @@
 
 <h1>Configuration de AbesWS</h1>
 
-<form method="get">
+<form method="post">
+ [% INCLUDE 'csrf-token.inc' %]
 
  <input type="hidden" name="class" value="[% CLASS %]"/>
  <input type="hidden" name="method" value="[% METHOD %]"/>
+ <input type="hidden" name="op" value="cud-save"/>
 
  <fieldset class="rows">
   <legend>Accès aux WS</legend>

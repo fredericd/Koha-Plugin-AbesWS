@@ -3,10 +3,12 @@
 
 <h1>AlgoLiens</h1>
 [% IF rcr_select %]
- <form method="get">
+ <form method="post">
+  [% INCLUDE 'csrf-token.inc' %]
   <input type="hidden" name="class" value="[% CLASS %]"/>
   <input type="hidden" name="method" value="[% METHOD %]"/>
   <input type="hidden" name="ws" value="algo"/>
+  <input type="hidden" name="op" value="cud-save"/>
 
   <fieldset class="rows">
     <legend>Filtrage</legend>
