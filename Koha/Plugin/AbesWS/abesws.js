@@ -160,6 +160,8 @@ function traiteResultat(e) {
   });
 
   hidePopWin(null);
+  $('#toolbar.sticky').css('position', 'sticky');
+  $('#toolbar.sticky').css('z-index', '999');
 }
 
 function onClick(e, div) {
