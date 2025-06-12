@@ -173,8 +173,12 @@ function onClick(e, div) {
   $('#toolbar.sticky').css('position', 'relative');
   $('#toolbar.sticky').css('z-index', '-1');
   let index = 'Nom de personne';
-  if (tag == '601' || tag == '710' || tag == '711' || tag == '712' ) index = 'Nom de collectivité';
-  if (tag == '602') index = 'Famille';
+  if (c.marcflavour === 'MARC21') {
+    if (tag === '110' || tag === '710') index = 'Nom de collectivité';
+  } else {
+    if (tag == '601' || tag == '710' || tag == '711' || tag == '712' ) index = 'Nom de collectivité';
+    if (tag == '602') index = 'Famille';
+  }
   let value = current.get('3');
   if (value) {
     index = 'Identifiant IdRef (n°PPN)';
