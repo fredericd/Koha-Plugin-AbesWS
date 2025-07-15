@@ -226,7 +226,6 @@ function onClick(e, div) {
   let lang = $('[id^=tag_100_subfield_a_').val();
   lang = lang.substr(22,3);
   message.z101_a = lang;
-  //console.log(message);
 
   if (initClient()==0) {};
 
@@ -245,20 +244,15 @@ function onClick(e, div) {
 function pageCatalog() {
   // On charge les éléments externes
   $('head').append('<link rel="stylesheet" type="text/css" href="/api/v1/contrib/abesws/static/subModal.css">');
-  //console.log(c.idref.url);
   window.gDefaultPage = c.idref.url;
   $.getScript("/api/v1/contrib/abesws/static/subModal.js")
    .done(() => {
    });
   c.idref.catalog.fields_array.forEach(function(tag) {
-    //console.log(`tag: ${tag}`);
     const divs = $(`[id^=div_indicator_tag_${tag}]`);
-    //console.log('div length: ' + divs.length);
     for (let i=0; i < divs.length; i++) {
       (function(){
-        //console.log(i);
         const div = $(divs.get(i));
-        //console.log(div);
         const button = $("<a href='#' class='popupIdRef'><img src='/api/v1/contrib/abesws/static/img/idref-short.svg' style='max-height: 24px;'/></a>");
         div.append(button);
         button.click((e) => onClick(e, div));
@@ -322,7 +316,6 @@ function pageDetail() {
   }
   if (c.detail.qualimarc.enabled) {
     const url = `${c.url.qualimarc}/check`;
-    console.log(url);
     const query = `{
       "ppnList": ["${ppn}"],
       "typeAnalyse":"${c.detail.qualimarc.analyse}"
@@ -332,8 +325,6 @@ function pageDetail() {
       contentType: 'application/json',
       type: 'POST'
     }).done(function(res) {
-      console.log("fait");
-      console.log(res);
       let html = `
         <div style="padding-top:10px;">
           <h4>QualiMarc</h3>`;
@@ -472,20 +463,27 @@ function opacDetail() {
           html = `<div id="idref-infos">${html}</div>`;
           $('.nav-tabs').append(`
             <li id="tab_idref" class="nav-item" role="presentation">
-             <a href="#idref-infos" class="nav-link" id="tab_idref-tab"
-                data-toggle="tab" role="tab" aria-controls="tab_idref" aria-selected="false"
+             <a href="#idref-infos_panel"
+                class="nav-link"
+                id="idref-infos-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#idref-infos_panel"
+                aria-controls="idref-infos_panel"
+                role="tab"
+                aria-selected="false"
+                tabindex="-1"
              >
                ${opac.text.tab}
              </a>
             </li>
           `);
           $('#bibliodescriptions .tab-content').append(`
-            <div id="idref-infos" class="tab-pane" role="tabpanel" aria-labelledby="tab_idref-tab">
+            <div id="idref-infos_panel" class="tab-pane" role="tabpanel" aria-labelledby="tab_idref-tab">
               ${html}
             <div>
           `);
         }
-        $('a[href="#idref-infos"]').click();
+        showBsTab("bibliodescriptions", "idref-infos");
         $([document.documentElement, document.body]).animate({
           scrollTop: $("#idref-infos").offset().top
         }, 2000);
