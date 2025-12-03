@@ -284,13 +284,25 @@ function pageDetail() {
     console.log('PPN non trouvé. Manque-t-il le sélecteur PPN ?');
     return;
   }
-  $('.nav-tabs').append(`
+  $('.nav.nav-tabs').append(`
     <li role="presentation">
-      <a href="#abes" aria-controls="abes" role="tab" data-toggle="tab" aria-expanded="false">AbesWS</a>
+      <a
+		class="nav-link"
+		href="#idref_panel"
+		id="idref-tab"
+		data-tabname="idref"
+		aria-controls="idref_panel"
+		role="tab"
+		data-bs-toggle="tab"
+		data-bs-target="#idref_panel"
+		aria-selected="true"
+	  >
+        <span>AbesWS</span>
+      </a>
     </li>
   `);
   $('#bibliodetails .tab-content').append(`
-    <div role="tabpanel" class="tab-pane" id="abes">
+    <div class="tab-pane" id="idref_panel" role="tabpanel" aria-labelledby="idref-tab" tabindex="0"> 
       <div id="abes-content">
         <div id="abes-publications"></div>
         <div id="abes-qualimarc"></div>
@@ -300,13 +312,13 @@ function pageDetail() {
   if ( c.detail.location ) {
     getBibsFromPpn(ppn, (bibs) => {
       let html = '<div style="padding-top:10px;">' +
-      '<h4><img src="https://www.sudoc.abes.fr/~c_psi/psi_images/img_psi/3.0/icons/sudoc.png"/> Localisation</h4>' +
+      '<h4><img src="https://www.sudoc.abes.fr/htdocs/psi_images/img_psi/3.0/icons/sudoc.png"/> Localisation</h4>' +
       '<ul>' +
       bibs.map((bib) => {
         let style = bib.itsme
           ? "background: green; color: white;"
           : '';
-        let shortname = '<a href="http://www.abes.abes.fr/cbs/xslt//DB=2.1/SET=1/TTL=1/CLK?IKT=8888&TRM='
+        let shortname = '<a href="http://www.sudoc.abes.fr/cbs/xslt//DB=2.1/SET=1/TTL=1/CLK?IKT=8888&TRM='
           + bib.rcr + '" target="_blank" style="' + style + '">' + bib.shortname + '</a>';
         return '<li>' + shortname + '</li>'
       }).join('') +
