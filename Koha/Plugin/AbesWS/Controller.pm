@@ -7,6 +7,7 @@ use Mojo::UserAgent;
 use Mojo::JSON qw(decode_json encode_json);
 use Koha::Plugin::AbesWS;
 use Search::Elasticsearch;
+use Koha::SearchEngine::Elasticsearch;
 use MARC::Moose::Record;
 use YAML;
 
@@ -132,7 +133,9 @@ sub get {
         my $ppn_to_bib = {};
         if ($pc->{idref}->{opac}->{publication}->{elasticsearch}) {
             my $ec = C4::Context->config('elasticsearch');
-            my $e = Search::Elasticsearch->new( nodes => $ec->{server} );
+            my $e = Search::Elasticsearch->new(
+                Koha::SearchEngine::Elasticsearch::get_elasticsearch_params()
+            );
             my $query = {
                 index => $ec->{index_name} . '_biblios',
                 body => {
