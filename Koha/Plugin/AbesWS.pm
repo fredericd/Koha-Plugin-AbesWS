@@ -15,6 +15,7 @@ use Encode qw/ decode /;
 use MARC::Moose::Record;
 use Pithub::Markdown;
 use YAML;
+use Try::Tiny;
 
 
 ## Here is our metadata, some keys are required, some are optional
@@ -603,6 +604,7 @@ sub realign {
     ");
 
     my $ua  = Mojo::UserAgent->new;
+    $ua->connect_timeout(30);
     my $actions = {};
     my @idx_ids;
     my $idx_indexer = Koha::SearchEngine::Indexer->new({ index => $Koha::SearchEngine::BIBLIOS_INDEX });
@@ -628,8 +630,16 @@ sub realign {
             my ($url, $res, $action, $new_ppn);
             unless ($xml) {
                 $url = "https://www.idref.fr/$ppn.xml";
-                $res = $ua->get($url)->result;
+                try {
+                    $res = $ua->get($url)->result;
+                } catch {
+                    say "Erreur get url: $url";
+                    say $_;
+                    say $res->message if $res;
+                    $res = undef;
+                };
             }
+            next unless $res;
             #say Dump($res);
             if ($xml || $res->is_success || $res->code eq '301') {
                 if (!$xml && $res->code eq '301') {
